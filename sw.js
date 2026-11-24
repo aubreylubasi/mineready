@@ -1,5 +1,5 @@
 /* MineReady offline cache. build.py fills in the version and file list on every build. */
-const VERSION = 'mineready-web-1.0.1-9ebac36d11';
+const VERSION = 'mineready-web-1.0.1-71bb67087c';
 const FILES = [
   './',
   './fonts/fonts.css',
