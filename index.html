@@ -1186,7 +1186,7 @@ function field(label, input, hint, id){ if (id) input.id = id; return h('div',{c
 
 function openCompanyForm(){
   const p = S.profile || {};
-  const name = h('input',{type:'text', maxlength:100, value:p.name||'', placeholder:'e.g. Trans Mechanical Mining Ltd', autocomplete:'organization'});
+  const name = h('input',{type:'text', maxlength:100, value:p.name||'', placeholder:'Registered company name, as on your PACRA certificate', autocomplete:'organization'});
   const pacra = h('input',{type:'text', maxlength:40, value:p.pacra||'', placeholder:'Registration number'});
   const tpin = h('input',{type:'text', maxlength:20, value:p.tpin||'', inputmode:'numeric', placeholder:'10-digit TPIN'});
   const contact = h('input',{type:'text', maxlength:80, value:p.contact||'', placeholder:'Who handles contractor files'});
@@ -1837,7 +1837,7 @@ async function boot(){
   });
 }
 boot();
-if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost'))  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 </script>
 </body>
 </html>
