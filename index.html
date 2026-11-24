@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15232A">
+<meta name="description" content="Keep mine contractors' company and worker documents ready for site access.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MineReady">
+<meta name="format-detection" content="telephone=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self' blob:; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>MineReady - Contractor Documents</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --bg:#F4F5F2; --card:#FFFFFF; --line:#E2E5E0; --line2:#ECEEEA; --field:#B9C2C5;
+  --ink:#172126; --ink2:#26343A; --muted:#47545A; --muted2:#56636A;
+  --head:#15232A; --accent:#0F5F74; --accent-soft:#E2EEF0;
+  --ok-bg:#E3F2E7; --ok:#1D6236; --ok-dot:#2E8B4E;
+  --soon-bg:#FFF1D1; --soon:#7A4A00; --soon-dot:#D88A0B;
+  --bad-bg:#FBE4E2; --bad:#9E1F17; --bad-dot:#C8372D;
+  --miss-bg:#ECEEF0; --miss:#454D55; --miss-dot:#7B848C;
+  --inc-bg:#FCE7D6; --inc:#8A3B05; --inc-dot:#D2691E;
+  --wa:#17693B;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;margin:0;letter-spacing:-.2px;line-height:1.2}
+h1{font-size:22px} h2{font-size:17px} h3{font-size:15px}
+p{margin:0}
+.top{position:sticky;top:0;z-index:20;background:var(--head);color:#fff}
+.top .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.logo{display:flex;align-items:center;gap:10px;min-width:0}
+.mark{width:34px;height:34px;border-radius:9px;background:#E8A33D;color:#15232A;display:grid;place-items:center;flex:none}
+.brand{font-family:"Space Grotesk",Inter,sans-serif;font-weight:700;font-size:19px;line-height:1.1;min-width:0}
+.brand small{display:block;font-family:Inter,sans-serif;font-weight:500;font-size:12px;color:#B8C5CA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+.spacer{flex:1}
+.sync{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#C9D4D8;padding:5px 10px;border-radius:999px;background:#22343C;white-space:nowrap}
+.sync i{width:8px;height:8px;border-radius:50%;background:#7B848C}
+.sync.ok i{background:#3FB36B}.sync.warn i{background:#E8A33D}.sync.bad i{background:#E5484D}
+main{max-width:760px;margin:0 auto;padding:16px 16px 104px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card.flush{padding:0;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:var(--muted)} .small{font-size:13px} .xs{font-size:12px}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;flex:none}
+.pill.valid{background:var(--ok-bg);color:var(--ok)}
+.pill.soon{background:var(--soon-bg);color:var(--soon)}
+.pill.expired{background:var(--bad-bg);color:var(--bad)}
+.pill.missing{background:var(--miss-bg);color:var(--miss)}
+.pill.incomplete{background:var(--inc-bg);color:var(--inc)}
+.kpis.k5 .kpi:last-child:nth-child(odd){grid-column:1/-1}
+@media(min-width:620px){.kpis.k5{grid-template-columns:repeat(5,minmax(0,1fr))}.kpis.k5 .kpi:last-child:nth-child(odd){grid-column:auto}}
+.kgroup{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:2px 2px -6px}
+.demo-banner{background:#15232A;color:#FFF;border-radius:12px;padding:11px 14px;font-size:13px;font-weight:600;border-left:5px solid #E8A33D}
+.why{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-top:1px solid var(--line2)}
+.why .wt{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
+.why .we{font-size:13px;color:var(--muted)}
+.why .wa{font-size:13px;color:var(--ink2)}
+.why .wa b{font-weight:700}
+.tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:var(--miss-bg);color:var(--miss)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:11px;border:1.5px solid #C9D0D2;background:#fff;color:var(--ink2);font-weight:600;cursor:pointer;text-decoration:none;font-size:14px}
+.btn:hover{border-color:#9AA5A9}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#0B4E60}
+.btn.outline{border-color:var(--accent);color:var(--accent)}
+.btn.danger{border-color:#E3ADA8;color:var(--bad)}
+.btn.wa{border-color:var(--wa);color:var(--wa)}
+.btn.block{width:100%}
+.btn.sm{min-height:40px;padding:0 12px;font-size:13px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:620px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}
+.kpi .l{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);font-weight:500}
+.kpi .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.kpi .v{font-family:"Space Grotesk",Inter,sans-serif;font-size:32px;font-weight:700;line-height:1;margin-top:8px}
+.bar{height:10px;border-radius:5px;background:#E3E6E2;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ok-dot);border-radius:5px}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-top:1px solid var(--line2);background:none;width:100%;text-align:left;cursor:pointer;color:inherit;text-decoration:none}
+.li:hover{background:#FAFBF9}
+.list>.li:first-child,.list>.lirow:first-child{border-top:0}
+.li .main{flex:1;min-width:0}
+.li .t{font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.li .s{font-size:12.5px;color:var(--muted2);margin-top:2px;overflow-wrap:anywhere}
+.lirow{display:flex;align-items:stretch;border-top:1px solid var(--line2)}
+.lirow .li{border-top:0}
+.side-btn{display:flex;align-items:center;justify-content:center;min-width:52px;color:var(--wa);border-left:1px solid var(--line2);text-decoration:none}
+.sec-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 14px 8px}
+.sec-h h2{font-size:15px}
+.lbl{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px}
+.field{margin-bottom:14px}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=search],select,textarea{width:100%;min-height:46px;padding:10px 12px;border:1.5px solid var(--field);border-radius:10px;background:#fff;outline:none}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.check{display:flex;align-items:center;gap:10px;min-height:42px;cursor:pointer;font-size:14px}
+.check input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.check.dis{color:var(--muted2);cursor:default}
+.hint{font-size:12px;color:var(--muted2);margin-top:5px}
+.err{color:var(--bad);font-size:13px;margin-top:6px;font-weight:500}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chipbtn{min-height:42px;padding:0 14px;border-radius:8px;border:1.5px solid #C9D0D2;background:#fff;font-weight:600;cursor:pointer;font-size:14px}
+.chipbtn[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line)}
+nav.bottom .in{max-width:760px;margin:0 auto;display:flex;padding:6px 4px 8px}
+nav.bottom button{flex:1 1 0;min-height:54px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600;color:#5B666B;cursor:pointer}
+nav.bottom button .ic{width:52px;height:28px;border-radius:14px;display:grid;place-items:center}
+nav.bottom button[aria-current=page]{color:var(--accent)}
+nav.bottom button[aria-current=page] .ic{background:var(--accent-soft)}
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(10,18,22,.55);display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:620px){.modal-bg{align-items:center;padding:20px}}
+.modal{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;border-radius:18px 18px 0 0;padding:18px 16px 24px}
+@media(min-width:620px){.modal{border-radius:18px}}
+.mh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:0;background:#EEF1EC;color:var(--ink2);display:grid;place-items:center;cursor:pointer;flex:none}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:80;background:#15232A;color:#fff;padding:11px 16px;border-radius:12px;font-weight:600;font-size:14px;max-width:92vw;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.toast.bad{background:#9E1F17}
+.banner{border-radius:12px;padding:12px 14px;font-size:13.5px;border:1px solid}
+.banner.info{background:#E8F1F4;border-color:#BCD6DE;color:#0B4656}
+.banner.warn{background:var(--soon-bg);border-color:#F0D28A;color:var(--soon)}
+.banner.bad{background:var(--bad-bg);border-color:#EDB7B1;color:var(--bad)}
+.banner.ok{background:var(--ok-bg);border-color:#A9D8B7;color:var(--ok)}
+.banner b{font-weight:700}
+.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;margin:60px auto 16px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:26px 12px;color:var(--muted)}
+.preview{max-width:100%;max-height:60vh;border-radius:10px;border:1px solid var(--line);display:block;margin:0 auto}
+.filebox{display:flex;align-items:center;gap:12px;padding:10px;border:1.5px dashed #9AA5A9;border-radius:12px;flex-wrap:wrap}
+.thumb{width:56px;height:56px;border-radius:8px;object-fit:cover;background:#EEF1EC;display:grid;place-items:center;flex:none;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:6px 10px;font-size:14px;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;overflow-wrap:anywhere}
+@media(max-width:420px){.kv{grid-template-columns:1fr;gap:2px}.kv dd{margin-bottom:6px}}
+.hero{display:flex;flex-direction:column;gap:12px;padding:22px 18px}
+.hero .mark{width:52px;height:52px;border-radius:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:460px){.grid2{grid-template-columns:1fr}}
+.icon-left{display:inline-flex;align-items:center;gap:6px}
+.backbtn{display:inline-flex;align-items:center;gap:4px;border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:6px 0;min-height:40px;font-size:14px}
+.cleared-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.cleared-tag.yes{background:var(--ok-bg);color:var(--ok)}
+.cleared-tag.no{background:var(--bad-bg);color:var(--bad)}
+.progress{font-size:13px;color:var(--muted);min-height:18px}
+.sec li{margin-bottom:8px}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="logo">
+    <div class="mark" id="logoMark" aria-hidden="true"></div>
+    <div class="brand">MineReady<small id="subName">Contractor documents</small></div>
+  </div>
+  <div class="spacer"></div>
+  <span class="sync" id="sync"><i></i><span>Connecting</span></span>
+</div></header>
+<main id="view"><div class="spin" aria-label="Loading"></div></main>
+<nav class="bottom" aria-label="Sections"><div class="in" id="nav"></div></nav>
+<div id="modalRoot"></div>
+
+<script>
+'use strict';
+/* =========================================================================
+   MineReady — contractor documents for mine site access (v1.0)
+   - Each signed-in account's records live under data/users/<id>/, which the
+     platform keeps private to that account (not even the artifact owner sees it).
+   - Everything is rendered with textContent / DOM nodes, never innerHTML.
+   - Photos are re-encoded in the browser before upload (strips EXIF / GPS).
+   - Contractor file PDF and ZIP are generated on the device.
+   ========================================================================= */
+const APP_VERSION = '1.0.1';
+const NS = 'http://www.w3.org/2000/svg';
+
+/* ---------- defaults ---------- */
+const DEFAULT_COMPANY_TYPES = [
+  'PACRA certificate of incorporation',
+  'PACRA annual return',
+  'ZRA tax clearance certificate',
+  'NAPSA compliance certificate',
+  "Workers' Compensation (WCFCB) certificate",
+  'Public liability insurance',
+  'Safety, health and environment policy'
+];
+const DEFAULT_WORKER_TYPES = [
+  {name:'Medical fitness certificate', perMine:false},
+  {name:'Site induction', perMine:true},
+  {name:'Working at heights', perMine:false},
+  {name:'First aid', perMine:false},
+  {name:'Confined space entry', perMine:false},
+  {name:'Rigging and slinging', perMine:false},
+  {name:'Welding certificate', perMine:false},
+  {name:'Defensive driving', perMine:false},
+  {name:'Fire fighting', perMine:false}
+];
+const DEFAULT_REQ_COMPANY = ['PACRA certificate of incorporation','ZRA tax clearance certificate','NAPSA compliance certificate'];
+const DEFAULT_REQ_WORKER = ['Medical fitness certificate','Site induction'];
+const DEFAULT_MINES = [['kansanshi','Kansanshi Mine'],['lumwana','Lumwana Mine'],['mopani','Mopani Copper Mines'],['kcm','KCM Nchanga']];
+const WARN_OPTIONS = [14,30,45,60,90];
+const STATUS_LABEL = {valid:'Valid', soon:'Expiring', expired:'Expired', missing:'Missing', incomplete:'Incomplete'};
+const STATUS_RANK = {expired:0, missing:1, incomplete:2, soon:3, valid:4};
+const BLOCKING = new Set(['expired','missing','incomplete']);
+/* Document types that may legitimately be recorded with no expiry date (editable under More > Document types) */
+const DEFAULT_NO_EXPIRY = ['PACRA certificate of incorporation'];
+const DEMO_TEXT = 'DEMONSTRATION ENVIRONMENT – All sample company and worker records are fictional.';
+
+function defaultSettings(){
+  return {
+    mines: DEFAULT_MINES.map(([id,name])=>({id, name, company:[...DEFAULT_REQ_COMPANY], worker:[...DEFAULT_REQ_WORKER]})),
+    companyTypes: [...DEFAULT_COMPANY_TYPES],
+    workerTypes: DEFAULT_WORKER_TYPES.map(t=>({...t})),
+    noExpiryTypes: [...DEFAULT_NO_EXPIRY],
+    warnDays: 30,
+    activeMine: 'kansanshi'
+  };
+}
+
+/* ---------- small helpers ---------- */
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+    else if (v === true) el.setAttribute(k, '');
+    else el.setAttribute(k, String(v));
+  }
+  for (const c of kids.flat(Infinity)){
+    if (c == null || c === false) continue;
+    el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  return el;
+}
+const ICONS = {
+  home:['M3 10.5 12 3l9 7.5','M5.5 9v11h13V9','M10 20v-5.5h4V20'],
+  building:['M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16','M16 9h2a2 2 0 0 1 2 2v10','M2.5 21h19','M8 7.5h4M8 11.5h4M8 15.5h4'],
+  users:['M12.5 8a3.5 3.5 0 1 1-7 0a3.5 3.5 0 1 1 7 0','M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5','M16 4.6a3.5 3.5 0 0 1 0 6.8','M18 14.8c1.8.7 3 2.4 3.5 5.2'],
+  file:['M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z','M14 3v5h5','M9 13h6M9 17h6'],
+  more:['M5 12h.01','M12 12h.01','M19 12h.01'],
+  plus:['M12 5v14','M5 12h14'],
+  check:['M5 12.5l4.5 4.5L19 7.5'],
+  x:['M6 6l12 12','M18 6 6 18'],
+  back:['M15 18l-6-6 6-6'],
+  chev:['M9 6l6 6-6 6'],
+  clip:['M20.5 11.5l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.3-8.3a3.3 3.3 0 0 1 4.7 4.7l-8.3 8.3a1.7 1.7 0 0 1-2.4-2.4l7.6-7.6'],
+  download:['M12 4v11','M7 10.5l5 5 5-5','M5 20h14'],
+  upload:['M12 16V5','M7 9.5l5-5 5 5','M5 20h14'],
+  chat:['M4.5 19.5l1.2-3.6A8 8 0 1 1 8.2 18.4z','M9 10.5h6M9 13.5h4'],
+  edit:['M4 20h4L19 9l-4-4L4 16v4z','M13.5 6.5l4 4'],
+  trash:['M4 7h16','M10 11v6M14 11v6','M6 7l1 13h10l1-13','M9 7V4h6v3'],
+  copy:['M9 9h11v11H9z','M5 15H4V4h11v1'],
+  shield:['M12 2.5 4.5 5.5v6c0 4.8 3.2 8.4 7.5 10 4.3-1.6 7.5-5.2 7.5-10v-6z','M8.5 12l2.5 2.5 4.5-5'],
+  alert:['M12 3.5 2.5 20h19z','M12 10v4.5','M12 17.5h.01'],
+  search:['M17 11a6 6 0 1 1-12 0a6 6 0 1 1 12 0','M15.5 15.5 20 20'],
+  archive:['M3.5 4h17v4h-17z','M5 8v12h14V8','M10 12h4']
+};
+function icon(name, size=20, sw=1.8){
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('width', size); svg.setAttribute('height', size); svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('fill','none'); svg.setAttribute('stroke','currentColor');
+  svg.setAttribute('stroke-width', name==='more' ? 3.2 : sw); svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
+  svg.setAttribute('aria-hidden','true'); svg.setAttribute('focusable','false');
+  for (const d of (ICONS[name]||[])){ const p = document.createElementNS(NS,'path'); p.setAttribute('d', d); svg.append(p); }
+  return svg;
+}
+const clean = (s, max=200) => String(s ?? '').replace(/[\u0000-\u001F\u007F]/g,' ').replace(/\s+/g,' ').trim().slice(0, max);
+const cleanMulti = (s, max=1000) => String(s ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,'').replace(/\r\n?/g,'\n').trim().slice(0, max);
+const uniq = a => [...new Set(a)];
+const deep = o => JSON.parse(JSON.stringify(o));
+const sleep = ms => new Promise(r=>setTimeout(r, ms));
+function randId(n=10){ const a='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'; const b=new Uint8Array(n); crypto.getRandomValues(b); return [...b].map(x=>a[x%a.length]).join(''); }
+const pad2 = n => String(n).padStart(2,'0');
+function today0(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function ymd(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function parseD(s){ if (typeof s!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const [y,m,d] = s.split('-').map(Number); const dt = new Date(y, m-1, d); return (dt.getFullYear()===y && dt.getMonth()===m-1 && dt.getDate()===d) ? dt : null; }
+const isDate = s => !!parseD(s);
+function addDays(n){ const d=today0(); d.setDate(d.getDate()+n); return ymd(d); }
+function daysUntil(s){ const d=parseD(s); return d ? Math.round((d - today0())/86400000) : null; }
+function fmtDate(s){ const d=parseD(s); return d ? d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '–'; }
+function fmtShort(s){ const d=parseD(s); if (!d) return '–'; const sameYear = d.getFullYear()===new Date().getFullYear(); return d.toLocaleDateString('en-GB', sameYear ? {day:'numeric',month:'short'} : {day:'numeric',month:'short',year:'numeric'}); }
+function fmtMonthYear(s){ const d=parseD(s); return d ? d.toLocaleDateString('en-GB',{month:'short',year:'numeric'}) : '–'; }
+function plural(n, w){ return `${n} ${w}${n===1?'':'s'}`; }
+function $(id){ return document.getElementById(id); }
+function toast(msg, bad){ const t=h('div',{class:'toast'+(bad?' bad':''),role:'status',text:msg}); document.body.append(t); setTimeout(()=>t.remove(), 3800); }
+function errMsg(e){
+  if (e && e.userMsg) return e.message;
+  const c = e && e.code;
+  if (c==='quota_exceeded' || c==='quota_or_state') return 'Storage is full. Remove old documents or files and try again.';
+  if (c==='resource_exhausted' || c==='rate_limited') return 'Too many changes at once. Wait a moment and try again.';
+  if (c==='invalid_argument') return "You don't have permission to save here, or the record was too large.";
+  if (c==='too_large') return 'That file is too large (20 MB maximum).';
+  if (c==='unsupported_type') return 'That file type is not supported. Use a photo (JPG or PNG) or a PDF.';
+  if (c==='revoked') return 'Your access changed. Reload the page.';
+  if (c==='declined') return 'Download cancelled.';
+  return 'Something went wrong. Check your connection and try again.';
+}
+function userErr(msg){ const e = new Error(msg); e.userMsg = true; return e; }
+function serialQueue(){ const m=new Map(); return (k, fn)=>{ const p=(m.get(k)||Promise.resolve()).catch(()=>{}).then(fn); m.set(k,p); return p; }; }
+async function withRetry(fn){ try{ return await fn(); } catch(e){ if (e && (e.code==='unavailable' || e.code==='store_unavailable')){ await sleep(400+Math.random()*700); return fn(); } throw e; } }
+function armConfirm(btn, label, armedLabel, fn){
+  let armed = false, t = null;
+  btn.addEventListener('click', ()=>{
+    if (!armed){ armed = true; btn.textContent = armedLabel; t = setTimeout(()=>{ armed=false; btn.textContent=label; }, 4000); return; }
+    clearTimeout(t); fn();
+  });
+  return btn;
+}
+
+/* ---------- sanitising data read back from storage ---------- */
+function sanitizeFile(f){
+  if (!f || typeof f!=='object') return null;
+  if (!['asset','inline','mem','dev'].includes(f.kind)) return null;
+  if (typeof f.id!=='string' || !/^[A-Za-z0-9_-]{6,64}$/.test(f.id)) return null;
+  const type = f.type==='application/pdf' ? 'application/pdf' : 'image/jpeg';
+  return {kind:f.kind, id:f.id, type, w:Math.max(0,Math.min(10000,Number(f.w)||0)), h:Math.max(0,Math.min(10000,Number(f.h)||0)), name:clean(f.name,120), size:Math.max(0,Number(f.size)||0)};
+}
+function sanitizeRec(r, fallbackId){
+  if (!r || typeof r!=='object') return null;
+  const type = clean(r.type,80); if (!type) return null;
+  const id = /^[A-Za-z0-9]{4,40}$/.test(r.id||'') ? r.id : fallbackId;
+  if (!id || !/^[A-Za-z0-9]{4,40}$/.test(id)) return null;
+  return {
+    id, type, mine: clean(r.mine,40), ref: clean(r.ref,60),
+    issued: isDate(r.issued) ? r.issued : '', expires: isDate(r.expires) ? r.expires : '',
+    noExpiry: r.noExpiry===true, file: sanitizeFile(r.file), notes: cleanMulti(r.notes,500),
+    sample: r.sample===true, sampleNoCopy: r.sampleNoCopy===true, updatedAt: Number(r.updatedAt)||0
+  };
+}
+function sanitizeWorker(w, id){
+  if (!w || typeof w!=='object' || !/^[A-Za-z0-9]{4,40}$/.test(id)) return null;
+  const name = clean(w.name,80); if (!name) return null;
+  const docs = Array.isArray(w.docs) ? w.docs.slice(0,80).map(d=>sanitizeRec(d, null)).filter(Boolean) : [];
+  return {
+    id, name, job: clean(w.job,60), empNo: clean(w.empNo,30), phone: clean(w.phone,24).replace(/[^0-9+ ]/g,''),
+    required: Array.isArray(w.required) ? uniq(w.required.slice(0,30).map(x=>clean(x,80)).filter(Boolean)) : [],
+    docs, sample: w.sample===true, createdAt: Number(w.createdAt)||0
+  };
+}
+function sanitizeProfile(p){
+  if (!p || typeof p!=='object') return null;
+  return { name: clean(p.name,100), pacra: clean(p.pacra,40), tpin: clean(p.tpin,20), contact: clean(p.contact,80),
+    phone: clean(p.phone,24).replace(/[^0-9+ ]/g,''), email: clean(p.email,100), address: clean(p.address,160), sample: p.sample===true };
+}
+function sanitizeSettings(s){
+  const d = defaultSettings();
+  if (!s || typeof s!=='object') return d;
+  const strList = (a, n, max) => Array.isArray(a) ? uniq(a.slice(0,n).map(x=>clean(x,max)).filter(Boolean)) : null;
+  const companyTypes = strList(s.companyTypes, 40, 80) || d.companyTypes;
+  const workerTypes = Array.isArray(s.workerTypes) ? s.workerTypes.slice(0,40).map(t=>({name:clean(t&&t.name,80), perMine:!!(t&&t.perMine)})).filter(t=>t.name) : d.workerTypes;
+  const seen = new Set();
+  const mines = Array.isArray(s.mines) ? s.mines.slice(0,20).map(m=>({
+      id: (typeof (m&&m.id)==='string' && /^[a-z0-9-]{1,40}$/.test(m.id)) ? m.id : '',
+      name: clean(m&&m.name,60), company: strList(m&&m.company,30,80)||[], worker: strList(m&&m.worker,30,80)||[]
+    })).filter(m=>m.id && m.name && !seen.has(m.id) && seen.add(m.id)) : d.mines;
+  const warnDays = WARN_OPTIONS.includes(Number(s.warnDays)) ? Number(s.warnDays) : 30;
+  let activeMine = typeof s.activeMine==='string' ? s.activeMine : '';
+  if (!mines.some(m=>m.id===activeMine)) activeMine = mines[0] ? mines[0].id : '';
+  const noExpiryTypes = strList(s.noExpiryTypes, 40, 80) || [...DEFAULT_NO_EXPIRY];
+  return {mines, companyTypes, workerTypes, noExpiryTypes, warnDays, activeMine};
+}
+
+/* =========================================================================
+   Storage. Records (all private to the signed-in account):
+     data/users/<id>/profile        company details
+     data/users/<id>/settings       mines, requirements, document types
+     data/users/<id>/cd_<rid>       one company document each
+     data/users/<id>/w_<wid>        one worker each, with their documents
+     data/users/<id>/files/f/<fid>  photo copies, only when file storage is unavailable
+   Files (photos, PDFs) go to the artifact's asset store; records keep only the id.
+   ========================================================================= */
+function makeCloudStore(db, uid, assets){
+  const base = 'data/users/' + uid;
+  const q = serialQueue();
+  const ref = id => db.doc(base + '/' + id);
+  const fileDoc = fid => db.doc(base + '/files').collection('f').doc(fid);
+  async function fileUrl(f){
+    if (f.kind==='asset') return '/_blob/' + f.id;
+    if (f.kind==='inline'){ const s = await withRetry(()=>fileDoc(f.id).get()); const d = s.exists ? s.data() : null; return d && typeof d.data==='string' && d.data.startsWith('data:image/jpeg;base64,') ? d.data : null; }
+    return null;
+  }
+  return {
+    kind:'cloud', uid, pdfUploads: !!assets,
+    subscribe(next, err){ return db.collection(base).onSnapshot(s=>next(s.docs.map(d=>({id:d.id, data:d.data()})), s.metadata), err); },
+    put(id, data){ return q(id, ()=>withRetry(()=>ref(id).set(data))); },
+    del(id){ return q(id, ()=>withRetry(()=>ref(id).delete())); },
+    async upload(prep){
+      if (assets){
+        try{
+          const r = await withRetry(()=>assets.upload(prep.blob, {type: prep.type}));
+          return {kind:'asset', id:r.id, type:prep.type, w:prep.w||0, h:prep.h||0, name:prep.name, size:r.sizeBytes||prep.blob.size};
+        }catch(e){
+          const lifecycle = e && ['not_granted','capability_disabled','capability_removed'].includes(e.code);
+          if (!lifecycle || prep.type!=='image/jpeg') throw e;
+        }
+      }
+      if (prep.type!=='image/jpeg') throw userErr('PDF uploads need edit access to MineReady. Take a photo of the document instead.');
+      const small = await shrinkForInline(prep.blob);
+      const fid = randId(16);
+      await withRetry(()=>fileDoc(fid).set({data:small.dataUrl, type:'image/jpeg', w:small.w, h:small.h, at:Date.now()}));
+      return {kind:'inline', id:fid, type:'image/jpeg', w:small.w, h:small.h, name:prep.name, size:small.bytes};
+    },
+    fileUrl,
+    async fileBlob(f){
+      if (f.kind==='asset'){ const r = await fetch('/_blob/' + f.id); if (!r.ok) throw userErr('A file could not be loaded.'); return await r.blob(); }
+      const u = await fileUrl(f); if (!u) throw userErr('A file could not be loaded.'); return dataUrlToBlob(u);
+    },
+    async removeFile(f){ try{ if (f.kind==='asset' && assets) await assets.delete(f.id); else if (f.kind==='inline') await fileDoc(f.id).delete(); }catch{} }
+  };
+}
+/* In-memory store with the same interface: used when the page runs outside claude.ai or signed out */
+function makeMemoryStore(){
+  const docs = new Map(), files = new Map(); let sub = null;
+  const emit = () => { if (sub) sub([...docs.entries()].map(([id,data])=>({id, data:deep(data)})), {fromCache:false}); };
+  return {
+    kind:'memory', uid:'local', pdfUploads:true,
+    subscribe(next){ sub = next; setTimeout(emit, 0); return ()=>{ sub=null; }; },
+    async put(id, data){ docs.set(id, deep(data)); emit(); },
+    async del(id){ docs.delete(id); emit(); },
+    async upload(prep){ const id = randId(16); files.set(id, prep.blob); return {kind:'mem', id, type:prep.type, w:prep.w||0, h:prep.h||0, name:prep.name, size:prep.blob.size}; },
+    async fileUrl(f){ const b = files.get(f.id); return b ? URL.createObjectURL(b) : null; },
+    async fileBlob(f){ const b = files.get(f.id); if (!b) throw userErr('A file could not be loaded.'); return b; },
+    async removeFile(f){ files.delete(f.id); }
+  };
+}
+
+/* Phone storage (IndexedDB): used by the Android app and any browser outside claude.ai.
+   Records and file copies stay on this device only. */
+function idbReq(req){ return new Promise((res, rej)=>{ req.onsuccess = ()=>res(req.result); req.onerror = ()=>rej(req.error); }); }
+function idbOpen(){
+  return new Promise((res, rej)=>{
+    if (typeof indexedDB === 'undefined') return rej(new Error('no indexedDB'));
+    const r = indexedDB.open('mineready', 1);
+    r.onupgradeneeded = ()=>{ const d = r.result; if (!d.objectStoreNames.contains('docs')) d.createObjectStore('docs'); if (!d.objectStoreNames.contains('files')) d.createObjectStore('files'); };
+    r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error); r.onblocked = ()=>rej(new Error('blocked'));
+  });
+}
+async function makeDeviceStore(){
+  const idb = await idbOpen();
+  try{ if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch{}
+  const os = (name, mode) => idb.transaction(name, mode).objectStore(name);
+  let sub = null;
+  const emit = async () => {
+    if (!sub) return;
+    const s = os('docs','readonly');
+    const [keys, vals] = await Promise.all([idbReq(s.getAllKeys()), idbReq(s.getAll())]);
+    if (sub) sub(keys.map((k,i)=>({id:String(k), data:vals[i]})), {fromCache:false});
+  };
+  return {
+    kind:'device', uid:'device', pdfUploads:true,
+    subscribe(next, err){ sub = next; emit().catch(e=>err && err({code:'unavailable', message:String(e)})); return ()=>{ sub=null; }; },
+    async put(id, data){ await idbReq(os('docs','readwrite').put(deep(data), id)); await emit(); },
+    async del(id){ await idbReq(os('docs','readwrite').delete(id)); await emit(); },
+    async upload(prep){ const id = randId(16); await idbReq(os('files','readwrite').put(prep.blob, id)); return {kind:'dev', id, type:prep.type, w:prep.w||0, h:prep.h||0, name:prep.name, size:prep.blob.size}; },
+    async fileUrl(f){ const b = await idbReq(os('files','readonly').get(f.id)); return b ? URL.createObjectURL(b) : null; },
+    async fileBlob(f){ const b = await idbReq(os('files','readonly').get(f.id)); if (!b) throw userErr('A file could not be loaded.'); return b; },
+    async removeFile(f){ try{ await idbReq(os('files','readwrite').delete(f.id)); }catch{} }
+  };
+}
+
+/* Android app bridge: saving, sharing and opening files, copying text */
+const ANDROID = (typeof window !== 'undefined' && window.AndroidBridge) ? window.AndroidBridge : null;
+function bytesToB64(u8){ let s = ''; for (let i=0;i<u8.length;i+=0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i+0x8000)); return btoa(s); }
+function mimeFor(name){ const e = String(name).split('.').pop().toLowerCase(); return ({pdf:'application/pdf', zip:'application/zip', csv:'text/csv', jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', txt:'text/plain'})[e] || 'application/octet-stream'; }
+async function bridgeSend(filename, data, action){
+  const blob = data instanceof Blob ? data : new Blob([data]);
+  const u8 = new Uint8Array(await blob.arrayBuffer());
+  const fail = r => { const e = new Error(String(r).replace(/^error\|/,'') || 'The file could not be saved.'); e.userMsg = true; return e; };
+  let r = String(ANDROID.begin(filename, mimeFor(filename))); if (!r.startsWith('ok')) throw fail(r);
+  const CH = 3*131072;
+  for (let i=0;i<u8.length;i+=CH){ r = String(ANDROID.chunk(bytesToB64(u8.subarray(i, i+CH)))); if (!r.startsWith('ok')) throw fail(r); }
+  r = String(ANDROID.finish(action)); if (!r.startsWith('ok')) throw fail(r);
+  return r.slice(3);
+}
+function makeAndroidDownloads(){
+  return { async save({filename, data}){ const where = await bridgeSend(filename, data, 'save'); return {status:'saved', where}; } };
+}
+
+/* Ordinary browsers: iPhone/Android share sheet where available, otherwise a normal download */
+function makeWebDownloads(){
+  const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return { async save({filename, data}){
+    const blob = new Blob([data], {type: mimeFor(filename)});
+    if (mobile && navigator.share && navigator.canShare){
+      try{
+        const file = new File([blob], filename, {type: mimeFor(filename)});
+        if (navigator.canShare({files:[file]})){ await navigator.share({files:[file], title: filename}); return {status:'shared'}; }
+      }catch(e){ if (e && e.name === 'AbortError'){ const x = new Error('cancelled'); x.code = 'declined'; throw x; } }
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.rel = 'noopener'; a.style.display = 'none';
+    document.body.append(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 60000);
+    return {status:'saved'};
+  } };
+}
+
+/* ---------- images ---------- */
+function loadImage(blob){
+  return new Promise((res, rej)=>{ const url = URL.createObjectURL(blob); const img = new Image();
+    img.onload = ()=>{ URL.revokeObjectURL(url); res(img); }; img.onerror = ()=>{ URL.revokeObjectURL(url); rej(userErr('That image could not be read. Try another photo.')); }; img.src = url; });
+}
+function canvasToJpeg(cv, q){
+  return new Promise((res, rej)=>{ if (!cv.toBlob) return rej(userErr('This browser cannot prepare images.')); cv.toBlob(b=> b ? res(b) : rej(userErr('This browser cannot prepare images.')), 'image/jpeg', q); });
+}
+async function toJpeg(blob, max, q){
+  const img = await loadImage(blob);
+  const s = Math.min(1, max/Math.max(img.naturalWidth||img.width, img.naturalHeight||img.height));
+  const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round((img.naturalWidth||img.width)*s)); cv.height = Math.max(1, Math.round((img.naturalHeight||img.height)*s));
+  const g = cv.getContext('2d'); if (!g) throw userErr('This browser cannot prepare images.');
+  g.fillStyle = '#FFFFFF'; g.fillRect(0,0,cv.width,cv.height); g.drawImage(img,0,0,cv.width,cv.height);
+  const out = await canvasToJpeg(cv, q);
+  return {blob:out, w:cv.width, h:cv.height};
+}
+function blobToDataUrl(b){ return new Promise((res, rej)=>{ const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=()=>rej(r.error); r.readAsDataURL(b); }); }
+function dataUrlToBlob(u){ const [head, b64] = u.split(','); const bin = atob(b64); const a = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return new Blob([a], {type: (head.match(/data:([^;]+)/)||[])[1] || 'application/octet-stream'}); }
+async function shrinkForInline(blob){
+  let max = 1400, q = 0.72;
+  for (let i=0;i<7;i++){
+    const r = await toJpeg(blob, max, q); const url = await blobToDataUrl(r.blob);
+    if (url.length <= 190000) return {dataUrl:url, w:r.w, h:r.h, bytes:r.blob.size};
+    max = Math.round(max*0.82); q = Math.max(0.45, q-0.06);
+  }
+  throw userErr('That photo is too detailed to store. Try a closer, simpler photo.');
+}
+async function prepareUpload(file){
+  if (!file) return null;
+  const isPdf = file.type==='application/pdf' || /\.pdf$/i.test(file.name||'');
+  if (isPdf){
+    if (file.size > 20*1024*1024) throw userErr('That PDF is over 20 MB.');
+    if (!S.store.pdfUploads) throw userErr('PDF uploads need edit access to MineReady. Take a photo of the document instead.');
+    return {blob:file, type:'application/pdf', name:clean(file.name,120)||'document.pdf'};
+  }
+  if (/^image\//.test(file.type||'') || /\.(jpe?g|png|webp|gif|heic|heif)$/i.test(file.name||'')){
+    if (file.size > 40*1024*1024) throw userErr('That image is too large.');
+    const r = await toJpeg(file, 2000, 0.82);
+    return {blob:r.blob, type:'image/jpeg', w:r.w, h:r.h, name:clean(file.name,120)||'photo.jpg'};
+  }
+  throw userErr('Choose a photo or a PDF.');
+}
+
+/* =========================================================================
+   State and status logic
+   ========================================================================= */
+const S = {
+  ready:false, loaded:false, store:null, sync:'connecting', syncNote:'',
+  profile:null, settings:defaultSettings(), settingsSaved:false, companyDocs:[], workers:[],
+  downloads:null, tab:'home', workerId:null, modalOpen:false, dirty:false,
+  wq:'', wfilter:'all', fileMine:null, fileSel:null, fileSelMine:null, busy:false, progressEl:null
+};
+const mineById = id => S.settings.mines.find(m=>m.id===id) || null;
+const activeMine = () => mineById(S.settings.activeMine) || S.settings.mines[0] || null;
+function workerType(name){ return S.settings.workerTypes.find(t=>t.name===name) || {name, perMine:false}; }
+function best(recs){
+  let b = null, bs = -Infinity;
+  for (const r of recs){
+    const d = parseD(r.expires); const s = r.noExpiry ? Infinity : (d ? d.getTime() : -1e15);
+    if (s > bs || (s === bs && (r.updatedAt||0) > ((b&&b.updatedAt)||0))){ b = r; bs = s; }
+  }
+  return b;
+}
+/* v1.0.1 validation. One place decides a record's status; everything else (dashboard,
+   profiles, filters, readiness, PDF, CSV) reads it from here.
+     missing    no record for a required document
+     expired    expiry date has passed
+     incomplete no copy attached, blank expiry date, or "no expiry" on a type not allowed it
+     soon       valid but expires within the warning window
+     valid      copy attached and dates valid                                              */
+const noExpiryAllowed = type => (S.settings.noExpiryTypes || DEFAULT_NO_EXPIRY).includes(type);
+const hasCopy = rec => !!(rec && (rec.file || (rec.sample && !rec.sampleNoCopy)));
+function problemsOf(rec){
+  if (!rec) return [];
+  const p = [];
+  if (!hasCopy(rec)) p.push('nocopy');
+  if (rec.noExpiry){ if (!noExpiryAllowed(rec.type)) p.push('noexpiry-not-allowed'); }
+  else if (!isDate(rec.expires)) p.push('noexpiry');
+  return p;
+}
+function statusOf(rec){
+  if (!rec) return 'missing';
+  const n = rec.noExpiry ? null : daysUntil(rec.expires);
+  if (n != null && n < 0) return 'expired';
+  if (problemsOf(rec).length) return 'incomplete';
+  if (n != null && n <= S.settings.warnDays) return 'soon';
+  return 'valid';
+}
+function statusText(st, rec){
+  if (st==='missing' || !rec) return 'Missing';
+  if (st==='incomplete'){ const p = problemsOf(rec); return p.includes('nocopy') && p.length===1 ? 'Incomplete · no copy' : p.includes('nocopy') ? 'Incomplete' : 'Incomplete · no expiry date'; }
+  if (rec.noExpiry) return 'Valid · expiry N/A';
+  const n = daysUntil(rec.expires);
+  if (st==='expired') return 'Expired ' + fmtShort(rec.expires);
+  if (st==='soon') return n===0 ? 'Expires today' : `Expires in ${plural(n,'day')}`;
+  return rec.expires ? 'Valid to ' + fmtMonthYear(rec.expires) : 'Valid';
+}
+function docLabel(type, mineId){ return workerType(type).perMine && mineId ? `${type} (${(mineById(mineId)||{name:mineId}).name})` : type; }
+function evaluate(mineId){
+  const mine = mineById(mineId) || S.settings.mines[0] || {id:'', name:'No mine set up', company:[], worker:[]};
+  const counts = {valid:0, soon:0, expired:0, missing:0, incomplete:0};
+  const company = mine.company.map(type=>{ const rec = best(S.companyDocs.filter(d=>d.type===type)); const status = statusOf(rec); counts[status]++; return {type, rec, status}; });
+  const workers = S.workers.map(w=>{
+    const req = uniq([...mine.worker, ...w.required]);
+    const items = req.map(type=>{
+      const perMine = workerType(type).perMine;
+      const rec = best(w.docs.filter(d=>d.type===type && (!perMine || d.mine===mine.id)));
+      const status = statusOf(rec); counts[status]++;
+      return {type, rec, status, perMine, label: perMine ? `${type} (${mine.name})` : type};
+    });
+    const blockers = items.filter(i=>BLOCKING.has(i.status));
+    const warnings = items.filter(i=>i.status==='soon');
+    const has = st => items.some(i=>i.status===st);
+    return {w, items, cleared: blockers.length===0, blockers, warnings, has};
+  });
+  const companyOk = company.every(c=>!BLOCKING.has(c.status));
+  const cleared = workers.filter(x=>x.cleared).length;
+  const pct = workers.length ? Math.round(cleared/workers.length*100) : 0;
+  return {mine, company, workers, companyOk, counts, cleared, pct};
+}
+/* Needs-attention list: exactly the required documents for the selected mine that are not valid,
+   so its count always matches the dashboard tiles (expiring + expired + missing + incomplete). */
+function attentionItems(ev){
+  const out = [];
+  for (const c of ev.company) if (c.status!=='valid') out.push({kind:'company', type:c.type, rec:c.rec, status:c.status});
+  for (const x of ev.workers) for (const i of x.items) if (i.status!=='valid') out.push({kind:'worker', w:x.w, type:i.type, mine:i.perMine ? ev.mine.id : '', rec:i.rec, status:i.status, label:i.label});
+  out.sort((a,b)=> STATUS_RANK[a.status]-STATUS_RANK[b.status] || ((a.rec ? daysUntil(a.rec.expires)||0 : 0) - (b.rec ? daysUntil(b.rec.expires)||0 : 0)));
+  return out;
+}
+function waNumber(p){
+  let d = String(p||'').replace(/\D/g,'');
+  if (d.startsWith('00')) d = d.slice(2);
+  if (d.length===10 && d.startsWith('0')) d = '260' + d.slice(1);
+  else if (d.length===9 && /^[79]/.test(d)) d = '260' + d;
+  return d.length>=11 && d.length<=15 ? d : null;
+}
+function waText(w, items){
+  if (!items.length) return null;
+  const co = (S.profile && S.profile.name) || 'your employer';
+  const first = w.name.split(' ')[0];
+  const lines = items.map(i=>{ const label = i.label || docLabel(i.type, i.mine);
+    if (i.status==='missing' || !i.rec) return `- ${label}: not on file yet`;
+    if (i.status==='expired') return `- ${label}: expired on ${fmtDate(i.rec.expires)}`;
+    if (i.status==='incomplete') return `- ${label}: ${problemsOf(i.rec).includes('nocopy') ? 'we need a copy of the certificate' : 'we need the expiry date'}`;
+    return `- ${label}: expires on ${fmtDate(i.rec.expires)}`; });
+  const ask = items.every(i=>i.status==='incomplete') ? 'Please send me what is needed' : 'Please renew it and send me a copy';
+  return `Hello ${first}, this is a reminder from ${co}.\n${lines.join('\n')}\n${ask} so you can keep working on site. Thank you.`;
+}
+function waLink(w, items){
+  const num = waNumber(w.phone); const text = waText(w, items);
+  if (!num || !text) return null;
+  return 'https://wa.me/' + num + '?text=' + encodeURIComponent(text);
+}
+/* Demo mode: sample workers have no phone numbers, so show the reminder instead of sending it */
+function waPreview(w, items){
+  const text = waText(w, items); if (!text) return;
+  openModal('WhatsApp reminder preview', h('div',{class:'stack',style:'gap:10px'},
+    h('div',{class:'banner info'}, h('b',null,'Demonstration only. '), 'Nothing is sent. With a real worker, this opens WhatsApp with the message filled in.'),
+    h('textarea',{readonly:true, style:'min-height:170px;font-size:14px'}, text)));
+}
+
+/* =========================================================================
+   Routing and chrome
+   ========================================================================= */
+const TABS = [['home','Home','home'],['company','Company','building'],['workers','Workers','users'],['file','File','file'],['more','More','more']];
+function go(hash){ if (location.hash !== '#'+hash) location.hash = hash; else route(); }
+function route(){
+  const hs = (location.hash||'').slice(1);
+  if (/^worker-[A-Za-z0-9]{4,40}$/.test(hs)){ S.tab='workers'; S.workerId = hs.slice(7); }
+  else { S.workerId = null; S.tab = TABS.some(t=>t[0]===hs) ? hs : 'home'; }
+  render(true);
+}
+window.addEventListener('hashchange', route);
+function renderChrome(){
+  const lm = $('logoMark'); if (!lm.firstChild) lm.append(icon('shield', 20, 2.2));
+  $('subName').textContent = (S.profile && S.profile.name) ? S.profile.name : 'Contractor documents';
+  const sc = $('sync'); sc.textContent = '';
+  const map = {connecting:['warn','Connecting'], live:['ok','Saved'], device:['ok','On this device'], local:['warn','Not saved'], stale:['warn','Reconnecting'], off:['bad','Offline']};
+  const [cls, label] = map[S.sync] || map.connecting;
+  sc.className = 'sync ' + cls; sc.title = S.syncNote || label;
+  sc.append(h('i'), h('span', {text:label}));
+  const nav = $('nav'); nav.textContent = '';
+  for (const [id,label2,ic] of TABS){
+    const cur = S.tab===id;
+    nav.append(h('button',{type:'button', 'aria-current': cur ? 'page' : null, onclick:()=>go(id)}, h('span',{class:'ic'}, icon(ic, 22)), h('span',{text:label2})));
+  }
+}
+function render(scrollTop){
+  renderChrome();
+  const v = $('view'); v.textContent = ''; S.progressEl = null;
+  if (!S.ready || !S.loaded){
+    v.append(h('div',{class:'spin','aria-label':'Loading'}));
+    if (S.sync==='stale') v.append(h('p',{class:'muted small',style:'text-align:center'}, S.syncNote));
+    return;
+  }
+  if (hasSampleData()) v.append(h('div',{class:'demo-banner',style:'margin-bottom:14px',role:'note'}, DEMO_TEXT));
+  if (S.store.kind==='memory') v.append(h('div',{class:'banner warn',style:'margin-bottom:14px'}, h('b',null,'Demo mode. '), 'This browser is blocking storage (often a private window), so nothing is saved when you close it. Open MineReady in a normal window to keep your records.'));
+  if (S.sync==='stale' || S.sync==='off') v.append(h('div',{class:'banner info',style:'margin-bottom:14px'}, S.syncNote || 'Reconnecting. What you see may be out of date.'));
+  const views = {home:viewHome, company:viewCompany, workers:viewWorkers, file:viewFile, more:viewMore};
+  v.append(S.workerId ? viewWorker(S.workerId) : (views[S.tab] || viewHome)());
+  if (scrollTop) window.scrollTo(0,0);
+}
+function softRender(){
+  if (S.modalOpen){ S.dirty = true; return; }
+  const y = window.scrollY; render(false); window.scrollTo(0, y);
+}
+
+/* ---------- shared bits ---------- */
+function hasSampleData(){ return !!((S.profile && S.profile.sample) || S.companyDocs.some(d=>d.sample) || S.workers.some(w=>w.sample)); }
+function statusWord(st){ return (STATUS_LABEL[st] || st).toLowerCase(); }
+function pill(st, text){ return h('span',{class:'pill '+st, text: text || STATUS_LABEL[st]}); }
+function mineSelect(value, onChange, id){
+  const s = h('select',{id: id || null, 'aria-label':'Mine'}, S.settings.mines.map(m=>h('option',{value:m.id, selected: m.id===value}, m.name)));
+  s.addEventListener('change', ()=>onChange(s.value));
+  return s;
+}
+async function saveSettings(next){
+  const prev = S.settings; S.settings = next;
+  try{ await S.store.put('settings', next); S.settingsSaved = true; }
+  catch(e){ S.settings = prev; toast(errMsg(e), true); softRender(); throw e; }
+}
+function setActiveMine(id){
+  if (S.settings.activeMine===id) return;
+  S.fileMine = null;
+  saveSettings({...S.settings, activeMine:id}).catch(()=>{});
+  softRender();
+}
+function minePickerLine(labelText){
+  if (!S.settings.mines.length) return h('div',{class:'banner warn'}, 'No mines set up yet. Add one under More → Mines and requirements.');
+  return h('div',{class:'row',style:'gap:8px'}, h('label',{class:'small muted',for:'mineSel-'+labelText.length, text:labelText}),
+    h('div',{style:'flex:1;min-width:180px'}, mineSelect(S.settings.activeMine, setActiveMine, 'mineSel-'+labelText.length)));
+}
+function recRow({title, sub, status, stText, hasFile, onclick}){
+  return h('button',{type:'button', class:'li', onclick},
+    h('div',{class:'main'}, h('div',{class:'t'}, title), sub ? h('div',{class:'s'}, sub) : null),
+    hasFile ? h('span',{class:'muted', title:'Copy attached', 'aria-label':'Copy attached'}, icon('clip',18)) : null,
+    pill(status, stText));
+}
+function recSub(rec){
+  if (!rec) return 'Not added yet';
+  const bits = [];
+  if (rec.ref) bits.push('No. ' + rec.ref);
+  bits.push(rec.noExpiry ? 'Expiry N/A' : (rec.expires ? 'Expires ' + fmtDate(rec.expires) : 'No expiry date entered'));
+  if (!rec.file) bits.push(hasCopy(rec) ? 'sample copy' : 'no copy attached');
+  return bits.join(' · ');
+}
+
+/* =========================================================================
+   Views
+   ========================================================================= */
+function onboarding(){
+  return h('div',{class:'card hero'},
+    h('div',{class:'mark'}, icon('shield', 30, 2.2)),
+    h('h1',null,'Welcome to MineReady'),
+    h('p',{class:'muted'},'Keep your company and worker documents ready for mine site access. MineReady warns you before anything expires and builds the contractor file for the mine in one tap.'),
+    h('div',{class:'stack',style:'gap:10px;margin-top:4px'},
+      h('button',{type:'button', class:'btn primary block', onclick:()=>openCompanyForm()}, 'Set up my company'),
+      h('button',{type:'button', class:'btn outline block', onclick:loadSample}, 'Try it with sample data')),
+    h('p',{class:'hint'}, S.store && S.store.kind==='device' ? 'Your records stay on this device. Nothing is sent anywhere unless you share it.' : 'Your records are private to your account.'));
+}
+function viewHome(){
+  const root = h('div',{class:'stack'});
+  if (!S.profile && !S.companyDocs.length && !S.workers.length){ root.append(onboarding()); return root; }
+  const ev = evaluate(S.settings.activeMine);
+  const p = S.profile || {};
+  root.append(h('div',{class:'card stack',style:'gap:10px'},
+    h('div',{class:'row between'}, h('h1',null, p.name || 'Your company'), (p.sample || S.workers.some(w=>w.sample)) ? h('span',{class:'tag'},'Sample data') : null),
+    minePickerLine('Checking for')));
+  const c = ev.counts;
+  const VAR = {valid:'ok', soon:'soon', expired:'bad', missing:'miss', incomplete:'inc', ink:'ink'};
+  const kpi = (n, label, st, onclick) => h(onclick ? 'button' : 'div',{class:'kpi', type: onclick ? 'button' : null, onclick: onclick || null, style: onclick ? 'text-align:left;cursor:pointer;font:inherit' : null},
+    h('div',{class:'l'}, st!=='ink' ? h('span',{class:'dot', style:`background:var(--${VAR[st]}-dot)`}) : null, h('span',{text:label})),
+    h('div',{class:'v', style:`color:var(--${VAR[st]})`, text:n}));
+  const toWorkers = f => () => { S.wfilter = f; S.wq = ''; go('workers'); };
+  const blockedN = ev.workers.length - ev.cleared;
+  root.append(h('div',{class:'kgroup'}, `Workers at ${ev.mine.name}`));
+  root.append(h('div',{class:'kpis'},
+    kpi(ev.workers.length,'Total workers','ink', toWorkers('all')),
+    kpi(ev.cleared,'Cleared for site','valid', toWorkers('cleared')),
+    kpi(blockedN,'Not cleared', blockedN ? 'expired' : 'valid', toWorkers('blocked')),
+    kpi(ev.workers.length ? ev.pct + '%' : '—','Ready', ev.pct===100 ? 'valid' : ev.pct>=50 ? 'soon' : 'expired')));
+  root.append(h('div',{class:'kgroup'}, 'Required documents'));
+  root.append(h('div',{class:'kpis k5'}, kpi(c.valid,'Valid','valid'), kpi(c.soon,`Expiring in ${S.settings.warnDays} days`,'soon'), kpi(c.expired,'Expired','expired'), kpi(c.missing,'Missing','missing'), kpi(c.incomplete,'Incomplete','incomplete')));
+  if (c.incomplete) root.append(h('div',{class:'banner warn'}, h('b',null,`${plural(c.incomplete,'required document')} ${c.incomplete===1?'is':'are'} incomplete. `),
+    'A document needs a copy attached and an expiry date (or expiry marked N/A where allowed) before it counts as valid. ',
+    h('button',{type:'button', class:'backbtn', style:'min-height:0;padding:0', onclick:toWorkers('incomplete')}, 'See workers affected')));
+
+  const companyBad = ev.company.filter(x=>BLOCKING.has(x.status));
+  const pct = ev.pct;
+  root.append(h('section',{class:'card stack',style:'gap:12px'},
+    h('div',{class:'row between'}, h('h2',null,'Ready for ' + ev.mine.name), ev.companyOk && ev.workers.length && ev.cleared===ev.workers.length ? pill('valid','All ready') : null),
+    h('div',{class:'row between'}, h('span',{class:'small'}, 'Company documents'),
+      companyBad.length ? pill(companyBad.some(x=>x.status==='expired')?'expired':companyBad.some(x=>x.status==='incomplete')?'incomplete':'missing', `${companyBad.length} not ready`) : (ev.company.length ? pill('valid', `${ev.company.length} of ${ev.company.length} ready`) : h('span',{class:'small muted'},'None required'))),
+    h('div',{class:'row between'}, h('span',{class:'small'}, 'Workers cleared for site'), h('span',{class:'small', style:'font-weight:600', text:`${ev.cleared} of ${ev.workers.length} · ${ev.workers.length ? pct + '% ready' : 'no workers'}`})),
+    h('div',{class:'bar', role:'img', 'aria-label':`${ev.cleared} of ${ev.workers.length} workers cleared`}, h('i',{style:`width:${pct}%`})),
+    h('div',{class:'row'},
+      !ev.workers.length ? h('button',{type:'button', class:'btn outline sm', onclick:()=>{ go('workers'); setTimeout(()=>openWorkerForm(null), 50); }}, icon('plus',16), 'Add your first worker') : null,
+      ev.workers.length > ev.cleared ?h('button',{type:'button', class:'btn outline sm', onclick:()=>{ S.wfilter='blocked'; go('workers'); }}, `See ${plural(ev.workers.length-ev.cleared,'blocked worker')}`) : null,
+      h('button',{type:'button', class:'btn primary sm', onclick:()=>go('file')}, icon('file',18), 'Prepare contractor file'))));
+
+  const items = attentionItems(ev);
+  const box = h('section',{class:'card flush'});
+  box.append(h('div',{class:'sec-h'}, h('div',null, h('h2',null,'Needs attention'), h('p',{class:'xs muted'}, `Required documents for ${ev.mine.name} that are expired, missing, incomplete, or expiring within ${S.settings.warnDays} days.`)), items.length ? h('span',{class:'tag', text:items.length}) : null));
+  if (!items.length) box.append(h('div',{class:'empty'}, 'Nothing needs attention. Every required document is valid.'));
+  else {
+    const list = h('div',{class:'list'});
+    const show = S.showAllAttention ? items : items.slice(0, 8);
+    for (const it of show) list.append(attentionRow(it, ev));
+    box.append(list);
+    if (items.length > 8) box.append(h('div',{style:'padding:8px 14px 14px'}, h('button',{type:'button', class:'btn sm', onclick:()=>{ S.showAllAttention = !S.showAllAttention; softRender(); }}, S.showAllAttention ? 'Show fewer' : `Show all ${items.length}`)));
+  }
+  root.append(box);
+  return root;
+}
+function attentionRow(it, ev){
+  const label = it.label || (it.kind==='worker' ? docLabel(it.type, it.mine) : it.type);
+  const title = it.kind==='worker' ? `${it.w.name} · ${label}` : label;
+  const n = it.rec ? daysUntil(it.rec.expires) : null;
+  const sub = it.status==='missing' ? `Required for ${ev.mine.name} · not added yet`
+    : it.status==='expired' ? `Expired ${fmtDate(it.rec.expires)} · ${plural(-n,'day')} ago`
+    : it.status==='incomplete' ? problemsOf(it.rec).map(p=>p==='nocopy' ? 'no copy attached' : p==='noexpiry' ? 'no expiry date entered' : 'this document must have an expiry date').join(' · ')
+    : `Expires ${fmtDate(it.rec.expires)}`;
+  const pt = it.status==='soon' ? (n===0 ? 'Today' : `${plural(n,'day')} left`) : STATUS_LABEL[it.status];
+  const open = () => it.kind==='company'
+    ? openDocForm({holder:'company', rec:it.rec, type:it.type})
+    : openDocForm({holder:it.w.id, rec:it.rec, type:it.type, mine:it.mine});
+  const main = h('button',{type:'button', class:'li', onclick:open}, h('div',{class:'main'}, h('div',{class:'t'}, title), h('div',{class:'s'}, sub)), pill(it.status, pt));
+  if (it.kind==='worker'){
+    const items = [{type:it.type, mine:it.mine, rec:it.rec, status:it.status, label}];
+    const link = waLink(it.w, items);
+    if (link) return h('div',{class:'lirow'}, main, h('a',{class:'side-btn', href:link, target:'_blank', rel:'noopener', 'aria-label':`Send ${it.w.name} a WhatsApp reminder`, title:'WhatsApp reminder'}, icon('chat',20)));
+    if (it.w.sample && !waNumber(it.w.phone)) return h('div',{class:'lirow'}, main, h('button',{type:'button', class:'side-btn', style:'border-top:0;border-right:0;border-bottom:0;background:none;cursor:pointer', onclick:()=>waPreview(it.w, items), 'aria-label':`Preview WhatsApp reminder for ${it.w.name}`, title:'Preview WhatsApp reminder'}, icon('chat',20)));
+  }
+  return main;
+}
+
+/* ---------- Company ---------- */
+function viewCompany(){
+  const root = h('div',{class:'stack'});
+  const p = S.profile;
+  const prof = h('section',{class:'card stack',style:'gap:12px'});
+  prof.append(h('div',{class:'row between'}, h('h1',null, p && p.name ? p.name : 'Company details'), h('button',{type:'button', class:'btn sm', onclick:()=>openCompanyForm()}, icon('edit',16), p ? 'Edit' : 'Add')));
+  if (p){
+    const kv = h('dl',{class:'kv'});
+    const add = (k,v) => { if (v) kv.append(h('dt',null,k), h('dd',null,v)); };
+    add('PACRA reg. no.', p.pacra); add('TPIN', p.tpin); add('Contact person', p.contact); add('Phone', p.phone); add('Email', p.email); add('Address', p.address);
+    prof.append(kv.childNodes.length ? kv : h('p',{class:'muted small'},'Add your PACRA number, TPIN and contact details so they appear on the contractor file.'));
+  } else prof.append(h('p',{class:'muted small'},'Add your company name and registration details. They go on the cover of every contractor file.'));
+  root.append(prof);
+
+  const ev = evaluate(S.settings.activeMine);
+  const req = h('section',{class:'card flush'});
+  req.append(h('div',{class:'sec-h',style:'flex-direction:column;align-items:stretch'}, h('h2',null,'Required documents'), minePickerLine('For')));
+  const list = h('div',{class:'list'});
+  if (!ev.company.length) list.append(h('div',{class:'empty'}, 'This mine has no company documents set as required.'));
+  for (const it of ev.company) list.append(recRow({title:it.type, sub:recSub(it.rec), status:it.status, stText:statusText(it.status,it.rec), hasFile:!!(it.rec&&it.rec.file),
+    onclick:()=>openDocForm({holder:'company', rec:it.rec, type:it.type})}));
+  req.append(list);
+  root.append(req);
+
+  const usedIds = new Set(ev.company.map(x=>x.rec && x.rec.id).filter(Boolean));
+  const others = S.companyDocs.filter(d=>!usedIds.has(d.id)).sort((a,b)=>a.type.localeCompare(b.type) || String(b.expires).localeCompare(String(a.expires)));
+  const oth = h('section',{class:'card flush'});
+  oth.append(h('div',{class:'sec-h'}, h('h2',null,'Other company documents'), h('button',{type:'button', class:'btn sm primary', onclick:()=>openDocForm({holder:'company'})}, icon('plus',16), 'Add')));
+  const ol = h('div',{class:'list'});
+  if (!others.length) ol.append(h('div',{class:'empty small'}, 'Older copies and documents not required by this mine show here.'));
+  for (const d of others){ const st = statusOf(d); ol.append(recRow({title:d.type, sub:recSub(d), status:st, stText:statusText(st,d), hasFile:!!d.file, onclick:()=>openDocForm({holder:'company', rec:d})})); }
+  oth.append(ol);
+  root.append(oth);
+  return root;
+}
+
+/* ---------- Workers ---------- */
+function workerSummary(x){
+  if (x.blockers.length) return x.blockers.slice(0,2).map(i=>`${i.perMine ? 'Induction' : i.type} ${statusWord(i.status)}`).join(' · ') + (x.blockers.length>2 ? ` · +${x.blockers.length-2} more` : '');
+  if (x.warnings.length){ const i = x.warnings[0]; const n = daysUntil(i.rec.expires); return `${i.perMine ? 'Induction' : i.type} expires in ${plural(n,'day')}`; }
+  return x.items.length ? 'All required documents valid' : 'No documents required';
+}
+const WORKER_FILTERS = [['all','All'],['cleared','Cleared'],['blocked','Blocked'],['expired','Expired'],['missing','Missing'],['incomplete','Incomplete'],['soon','Expiring soon']];
+const WFILTER_TEST = {
+  all: () => true,
+  cleared: x => x.cleared,
+  blocked: x => !x.cleared,
+  expired: x => x.has('expired'),
+  missing: x => x.has('missing'),
+  incomplete: x => x.has('incomplete'),
+  soon: x => x.has('soon')
+};
+function viewWorkers(){
+  const root = h('div',{class:'stack'});
+  const ev = evaluate(S.settings.activeMine);
+  root.append(h('div',{class:'row between'}, h('h1',null, `Workers (${S.workers.length})`), h('button',{type:'button', class:'btn primary sm', onclick:()=>openWorkerForm(null)}, icon('plus',16), 'Add worker')));
+  root.append(minePickerLine('Checking for'));
+  const q = h('input',{type:'search', placeholder:'Search by name, job or employee no.', 'aria-label':'Search workers', value:S.wq});
+  /* Worker filters count WORKERS (for the selected mine). A worker appears under Expired / Missing /
+     Incomplete / Expiring soon if at least one of their required documents has that status, so one worker
+     can appear under several. The dashboard "Expiring" tile counts DOCUMENTS (company + worker). */
+  if (!WORKER_FILTERS.some(f=>f[0]===S.wfilter)) S.wfilter = 'all';
+  const nOf = id => ev.workers.filter(WFILTER_TEST[id]).length;
+  const chip = (id, label) => h('button',{type:'button', class:'chipbtn', 'data-filter':id, 'aria-pressed': S.wfilter===id ? 'true':'false', onclick:()=>{ S.wfilter=id; draw(); syncChips(); }}, `${label} ${nOf(id)}`);
+  const chips = h('div',{class:'chips', role:'group', 'aria-label':'Filter workers'}, WORKER_FILTERS.map(([id,label])=>chip(id,label)));
+  const syncChips = () => [...chips.children].forEach(b=>b.setAttribute('aria-pressed', b.dataset.filter===S.wfilter ? 'true':'false'));
+  const box = h('div',{class:'card flush'});
+  const draw = () => {
+    box.textContent = '';
+    const needle = S.wq.trim().toLowerCase();
+    let rows = ev.workers.filter(WFILTER_TEST[S.wfilter] || WFILTER_TEST.all);
+    if (needle) rows = rows.filter(x=>(x.w.name+' '+x.w.job+' '+x.w.empNo).toLowerCase().includes(needle));
+    if (!S.workers.length){ box.append(h('div',{class:'empty'}, h('p',null,'No workers yet.'), h('p',{class:'small'},'Add the people you send to site, then attach their medicals, inductions and training certificates.'))); return; }
+    if (!rows.length){ box.append(h('div',{class:'empty'}, 'No workers match.')); return; }
+    const list = h('div',{class:'list'});
+    for (const x of rows) list.append(h('button',{type:'button', class:'li', onclick:()=>go('worker-'+x.w.id)},
+      h('div',{class:'main'}, h('div',{class:'t'}, x.w.name), h('div',{class:'s'}, [x.w.job, workerSummary(x)].filter(Boolean).join(' · '))),
+      h('span',{class:'cleared-tag ' + (x.cleared ? 'yes' : 'no')}, x.cleared ? 'Cleared' : 'Blocked'),
+      h('span',{class:'muted'}, icon('chev',18))));
+    box.append(list);
+  };
+  q.addEventListener('input', ()=>{ S.wq = q.value; draw(); });
+  root.append(q, chips, box);
+  draw();
+  return root;
+}
+/* Explanation and corrective action for one outstanding requirement */
+function reasonFor(i, mine){
+  const name = i.label || i.type;
+  if (i.status==='missing') return i.perMine
+    ? {why:`No ${i.type.toLowerCase()} for ${mine.name} is on file. ${mine.name} requires it before this worker can go on site.`, fix:`Complete the ${mine.name} induction and upload proof of it.`, btn:'Add induction'}
+    : {why:`No ${name} is on file. ${mine.name} requires it before this worker can go on site.`, fix:`Upload a copy of the ${name} with its expiry date.`, btn:'Add document'};
+  if (i.status==='expired'){ const n = -daysUntil(i.rec.expires);
+    return {why:`Expired on ${fmtDate(i.rec.expires)} (${plural(n,'day')} ago).`, fix:`Upload a renewed ${name} and enter the new expiry date.`, btn:'Update document'}; }
+  if (i.status==='incomplete'){
+    const p = problemsOf(i.rec), why = [], fix = [];
+    if (p.includes('nocopy')){ why.push('No copy of the certificate is attached.'); fix.push('Upload the missing document copy (photo or PDF).'); }
+    if (p.includes('noexpiry')){ why.push('The expiry date is blank.'); fix.push(noExpiryAllowed(i.type) ? 'Enter the expiry date, or confirm that expiry is not applicable.' : 'Enter the expiry date.'); }
+    if (p.includes('noexpiry-not-allowed')){ why.push('It is marked as never expiring, but this document type must have an expiry date.'); fix.push('Enter the expiry date shown on the certificate.'); }
+    return {why: why.join(' '), fix: fix.join(' '), btn: p.includes('nocopy') ? 'Attach copy' : 'Enter expiry date'};
+  }
+  if (i.status==='soon'){ const n = daysUntil(i.rec.expires); return {why: n===0 ? 'Expires today.' : `Expires on ${fmtDate(i.rec.expires)}, in ${plural(n,'day')}.`, fix:`Arrange the renewal before it expires, then upload the new ${name}.`, btn:'Update document'}; }
+  return null;
+}
+function whySection(w, x, ev){
+  const sec = h('section',{class:'card flush'});
+  if (x.cleared){
+    sec.append(h('div',{class:'sec-h'}, h('h2',null,`Cleared for ${ev.mine.name}`), h('span',{class:'cleared-tag yes'},'Cleared')),
+      h('div',{style:'padding:0 14px 14px'}, h('p',{class:'small muted'}, x.items.length ? `Every required document for ${ev.mine.name} has a copy attached and is in date.` : `${ev.mine.name} has no worker documents set as required.`)));
+    if (x.warnings.length){
+      sec.append(h('div',{style:'padding:0 14px 6px'}, h('p',{class:'small',style:'font-weight:600'},'Coming up')));
+      for (const i of x.warnings) sec.append(whyRow(w, i, ev));
+    }
+    return sec;
+  }
+  sec.append(h('div',{class:'sec-h'}, h('div',null, h('h2',null,'Why this worker is not cleared'), h('p',{class:'xs muted'}, `${plural(x.blockers.length,'requirement')} outstanding for ${ev.mine.name}. Fix each one to clear this worker.`)), h('span',{class:'cleared-tag no'},'Blocked')));
+  for (const i of [...x.blockers].sort((a,b)=>STATUS_RANK[a.status]-STATUS_RANK[b.status])) sec.append(whyRow(w, i, ev));
+  return sec;
+}
+function whyRow(w, i, ev){
+  const r = reasonFor(i, ev.mine);
+  return h('div',{class:'why'},
+    h('div',{class:'wt'}, h('span',null, i.label || i.type), pill(i.status)),
+    h('div',{class:'we'}, r.why),
+    h('div',{class:'wa'}, h('b',null,'Action: '), r.fix),
+    h('div',null, h('button',{type:'button', class:'btn sm outline', onclick:()=>openDocForm({holder:w.id, rec:i.rec, type:i.type, mine: i.perMine ? ev.mine.id : ''})}, icon(i.status==='missing' ? 'plus' : 'edit',16), r.btn)));
+}
+function viewWorker(id){
+  const root = h('div',{class:'stack'});
+  root.append(h('div',null, h('button',{type:'button', class:'backbtn', onclick:()=>go('workers')}, icon('back',18), 'All workers')));
+  const w = S.workers.find(x=>x.id===id);
+  if (!w){ root.append(h('div',{class:'card empty'}, 'This worker was not found. They may have been removed.')); return root; }
+  const ev = evaluate(S.settings.activeMine);
+  const x = ev.workers.find(y=>y.w.id===id);
+  const remind = waLink(w, [...x.blockers, ...x.warnings]);
+  root.append(h('section',{class:'card stack',style:'gap:10px'},
+    h('div',{class:'row between'}, h('div',null, h('h1',null,w.name), h('p',{class:'muted small'}, [w.job, w.empNo ? 'Emp. no. '+w.empNo : '', w.phone].filter(Boolean).join(' · ') || 'No details yet')),
+      h('button',{type:'button', class:'btn sm', onclick:()=>openWorkerForm(w)}, icon('edit',16), 'Edit')),
+    w.sample ? h('span',{class:'tag',style:'align-self:flex-start'},'Sample worker') : null,
+    remind ? h('a',{class:'btn wa sm', href:remind, target:'_blank', rel:'noopener', style:'align-self:flex-start'}, icon('chat',18), 'Send WhatsApp reminder')
+      : ((x.blockers.length || x.warnings.length) && w.sample ? h('button',{type:'button', class:'btn wa sm', style:'align-self:flex-start', onclick:()=>waPreview(w, [...x.blockers, ...x.warnings])}, icon('chat',18), 'Preview WhatsApp reminder')
+      : ((x.blockers.length || x.warnings.length) && !waNumber(w.phone) ? h('p',{class:'hint'}, 'Add a phone number to send this worker WhatsApp reminders.') : null))));
+
+  root.append(whySection(w, x, ev));
+
+  const req = h('section',{class:'card flush'});
+  req.append(h('div',{class:'sec-h',style:'flex-direction:column;align-items:stretch'},
+    h('div',{class:'row between'}, h('h2',null,'Site clearance'), h('span',{class:'cleared-tag ' + (x.cleared?'yes':'no')}, x.cleared ? 'Cleared' : 'Blocked')),
+    minePickerLine('For')));
+  const rl = h('div',{class:'list'});
+  if (!x.items.length) rl.append(h('div',{class:'empty small'},'No documents are required for this worker at this mine.'));
+  for (const it of x.items) rl.append(recRow({title:it.label, sub:recSub(it.rec), status:it.status, stText:statusText(it.status,it.rec), hasFile:!!(it.rec&&it.rec.file),
+    onclick:()=>openDocForm({holder:w.id, rec:it.rec, type:it.type, mine: it.perMine ? ev.mine.id : ''})}));
+  req.append(rl);
+  root.append(req);
+
+  const all = h('section',{class:'card flush'});
+  all.append(h('div',{class:'sec-h'}, h('h2',null,`All documents (${w.docs.length})`), h('button',{type:'button', class:'btn sm primary', onclick:()=>openDocForm({holder:w.id})}, icon('plus',16), 'Add')));
+  const al = h('div',{class:'list'});
+  if (!w.docs.length) al.append(h('div',{class:'empty small'},'No documents yet. Add the medical, induction and training certificates.'));
+  for (const d of [...w.docs].sort((a,b)=>a.type.localeCompare(b.type) || String(b.expires).localeCompare(String(a.expires)))){
+    const st = statusOf(d);
+    al.append(recRow({title:docLabel(d.type, d.mine), sub:recSub(d), status:st, stText:statusText(st,d), hasFile:!!d.file, onclick:()=>openDocForm({holder:w.id, rec:d})}));
+  }
+  all.append(al);
+  root.append(all);
+  return root;
+}
+
+/* ---------- Contractor file ---------- */
+function viewFile(){
+  const root = h('div',{class:'stack'});
+  if (!S.settings.mines.length){ root.append(h('h1',null,'Contractor file'), h('div',{class:'banner warn'},'Add a mine under More → Mines and requirements first.')); return root; }
+  const mineId = mineById(S.fileMine) ? S.fileMine : S.settings.activeMine;
+  const ev = evaluate(mineId);
+  if (!S.fileSel || S.fileSelMine !== ev.mine.id){ S.fileSel = new Set(ev.workers.filter(x=>x.cleared).map(x=>x.w.id)); S.fileSelMine = ev.mine.id; }
+  for (const idx of [...S.fileSel]) if (!ev.workers.some(x=>x.w.id===idx && x.cleared)) S.fileSel.delete(idx);
+  const chosen = ev.workers.filter(x=>x.cleared && S.fileSel.has(x.w.id));
+
+  root.append(h('div',null, h('h1',null,'Contractor file'), h('p',{class:'muted small',style:'margin-top:4px'},'Pick the mine. MineReady checks every document against its expiry date and puts the valid ones into one file, with a cover page and an index.')));
+  root.append(h('div',{class:'card'}, h('label',{class:'lbl', for:'fileMine'},'Mine site'), mineSelect(ev.mine.id, v=>{ S.fileMine = v; softRender(); }, 'fileMine')));
+
+  const companyBad = ev.company.filter(c=>BLOCKING.has(c.status));
+  if (!S.profile || !S.profile.name) root.append(h('div',{class:'banner warn'}, 'Add your company details on the Company tab so they appear on the cover page.'));
+  if (companyBad.length) root.append(h('div',{class:'banner bad'}, h('b',null,'Not ready to submit. '), `${companyBad.map(c=>c.type).join(', ')} ${companyBad.length===1?'is':'are'} ${companyBad.every(c=>c.status==='missing')?'missing':companyBad.every(c=>c.status==='incomplete')?'incomplete':'expired, missing or incomplete'}. You can still download the file, but the mine will likely reject it.`));
+  else if (!chosen.length) root.append(h('div',{class:'banner warn'}, 'No cleared workers selected yet.'));
+  else root.append(h('div',{class:'banner ok'}, h('b',null,'Ready. '), `Company documents are valid and ${plural(chosen.length,'worker')} ${chosen.length===1?'is':'are'} included.`));
+
+  const cbox = h('section',{class:'card flush'}, h('div',{class:'sec-h'}, h('h2',null,'Company documents')));
+  const cl = h('div',{class:'list'});
+  if (!ev.company.length) cl.append(h('div',{class:'empty small'}, 'None required for this mine.'));
+  for (const it of ev.company) cl.append(recRow({title:it.type, sub:recSub(it.rec), status:it.status, stText:statusText(it.status,it.rec), hasFile:!!(it.rec&&it.rec.file), onclick:()=>openDocForm({holder:'company', rec:it.rec, type:it.type})}));
+  cbox.append(cl); root.append(cbox);
+
+  const wbox = h('section',{class:'card flush'});
+  wbox.append(h('div',{class:'sec-h'}, h('h2',null,`Workers (${chosen.length} of ${ev.workers.length} included)`),
+    ev.cleared ? h('button',{type:'button', class:'btn sm', onclick:()=>{ const allOn = chosen.length===ev.cleared; S.fileSel = new Set(allOn ? [] : ev.workers.filter(x=>x.cleared).map(x=>x.w.id)); softRender(); }}, chosen.length===ev.cleared ? 'Clear all' : 'Select all') : null));
+  const wl = h('div',{class:'list'});
+  if (!ev.workers.length) wl.append(h('div',{class:'empty small'}, 'Add workers on the Workers tab.'));
+  for (const x of ev.workers){
+    if (x.cleared){
+      const cb = h('input',{type:'checkbox', checked: S.fileSel.has(x.w.id), 'aria-label':'Include '+x.w.name});
+      cb.addEventListener('change', ()=>{ cb.checked ? S.fileSel.add(x.w.id) : S.fileSel.delete(x.w.id); softRender(); });
+      wl.append(h('label',{class:'li', style:'cursor:pointer'}, cb, h('div',{class:'main'}, h('div',{class:'t'}, x.w.name), h('div',{class:'s'}, [x.w.job, x.warnings.length ? workerSummary(x) : 'All documents valid'].filter(Boolean).join(' · '))), h('span',{class:'cleared-tag yes'},'Cleared')));
+    } else {
+      wl.append(h('button',{type:'button', class:'li', onclick:()=>go('worker-'+x.w.id)}, h('span',{class:'muted', style:'width:20px;display:grid;place-items:center'}, icon('x',16)),
+        h('div',{class:'main'}, h('div',{class:'t'}, x.w.name), h('div',{class:'s'}, 'Cannot be included: ' + x.blockers.map(i=>`${i.label} ${statusWord(i.status)}`).join(', '))),
+        h('span',{class:'cleared-tag no'},'Fix')));
+    }
+  }
+  wbox.append(wl); root.append(wbox);
+
+  const hasPdf = ev.company.some(c=>c.rec && c.rec.file && c.rec.file.type==='application/pdf') || chosen.some(x=>x.items.some(i=>i.rec && i.rec.file && i.rec.file.type==='application/pdf'));
+  const prog = h('div',{class:'progress', role:'status', 'aria-live':'polite'}); S.progressEl = prog;
+  const actions = h('section',{class:'card stack',style:'gap:10px'});
+  const pdfBtn = h('button',{type:'button', class:'btn primary block', disabled: S.busy, onclick:()=>generate('pdf', ev, chosen)}, icon('download',18), 'Download contractor file (PDF)');
+  actions.append(pdfBtn);
+  if (hasPdf) actions.append(h('button',{type:'button', class:'btn outline block', disabled:S.busy, onclick:()=>generate('zip', ev, chosen)}, icon('archive',18), 'Download full pack (ZIP with PDF originals)'),
+    h('p',{class:'hint'},'Some documents were uploaded as PDFs. The contractor file lists them, and the ZIP pack includes the original PDFs beside it.'));
+  if (ANDROID && S.lastSaved && !S.busy) actions.append(h('div',{class:'grid2'},
+    h('button',{type:'button', class:'btn outline', onclick:()=>{ const r = String(ANDROID.shareFile(S.lastSaved)); if (!r.startsWith('ok')) toast(r.replace(/^error\|/,''), true); }}, icon('chat',18), 'Share file'),
+    h('button',{type:'button', class:'btn outline', onclick:()=>{ const r = String(ANDROID.openFile(S.lastSaved)); if (!r.startsWith('ok')) toast(r.replace(/^error\|/,''), true); }}, icon('file',18), 'Open file')));
+  actions.append(h('button',{type:'button', class:'btn block', onclick:()=>copySummary(ev, chosen)}, icon('copy',18), 'Copy summary for WhatsApp or email'), prog);
+  if (!S.downloads) actions.append(h('p',{class:'hint'}, 'Downloads are not available in this browser.'));
+  root.append(actions);
+  return root;
+}
+function fileSummaryText(ev, chosen){
+  const p = S.profile || {};
+  const lines = [`Contractor file: ${ev.mine.name}`, p.name || 'Company', ''];
+  lines.push('Company documents:');
+  for (const c of ev.company) lines.push(`- ${c.type}: ${statusText(c.status, c.rec)}${c.rec && c.rec.expires && c.status!=='missing' && !c.rec.noExpiry ? ' ('+fmtDate(c.rec.expires)+')' : ''}`);
+  lines.push('', `Workers cleared for site (${chosen.length}):`);
+  for (const x of chosen) lines.push(`- ${x.w.name}${x.w.job ? ' ('+x.w.job+')' : ''}${x.warnings.length ? ': '+workerSummary(x) : ''}`);
+  const blocked = ev.workers.filter(x=>!x.cleared);
+  if (blocked.length){ lines.push('', 'Not cleared:'); for (const x of blocked) lines.push(`- ${x.w.name}: ${x.blockers.map(i=>`${i.label} ${statusWord(i.status)}`).join(', ')}`); }
+  lines.push('', `Checked with MineReady on ${fmtDate(ymd(today0()))}.`);
+  return lines.join('\n');
+}
+async function copySummary(ev, chosen){
+  const text = fileSummaryText(ev, chosen);
+  if (ANDROID){ try{ if (String(ANDROID.copyText(text)).startsWith('ok')){ toast('Summary copied. Paste it into WhatsApp or an email.'); return; } }catch{} }
+  try{ await navigator.clipboard.writeText(text); toast('Summary copied. Paste it into WhatsApp or an email.'); }
+  catch{ const ta = h('textarea',{readonly:true, style:'min-height:280px;font-size:13px'}, text); openModal('Summary', h('div',null, h('p',{class:'muted small',style:'margin-bottom:8px'},'Select all and copy:'), ta)); }
+}
+function setProgress(t){ if (S.progressEl) S.progressEl.textContent = t; }
+async function generate(kind, ev, chosen){
+  if (S.busy) return;
+  if (!S.downloads){ toast('Downloads are not available in this view.', true); return; }
+  S.busy = true; softRender(); setProgress('Preparing documents…');
+  try{
+    const plan = await buildPlan(ev, chosen, setProgress);
+    setProgress('Building the PDF…');
+    const pdf = buildPdf(plan);
+    const base = `Contractor-file_${safeName((S.profile&&S.profile.name)||'Company')}_${safeName(ev.mine.name)}_${ymd(today0())}`;
+    let data = pdf, filename = base + '.pdf';
+    if (kind==='zip'){
+      setProgress('Packing the ZIP…');
+      const files = [{name: base + '.pdf', data: new Uint8Array(await pdf.arrayBuffer())}];
+      for (const a of plan.attachments) files.push({name:a.name, data:a.bytes});
+      data = makeZip(files); filename = base + '.zip';
+    }
+    setProgress(ANDROID ? 'Saving…' : 'Confirm the download to save it…');
+    const res = await S.downloads.save({filename, data});
+    if (ANDROID){ S.lastSaved = filename; setProgress(`Saved ${filename} to ${(res && res.where) || 'Downloads/MineReady'}`); toast('Saved to ' + ((res && res.where) || 'Downloads/MineReady')); }
+    else { setProgress(`Saved ${filename}`); toast('Contractor file saved.'); }
+  }catch(e){
+    if (e && e.code==='declined') setProgress('Download cancelled.');
+    else { setProgress(''); toast(errMsg(e), true); }
+  }
+  S.busy = false; const keep = S.progressEl ? S.progressEl.textContent : ''; softRender(); setProgress(keep);
+}
+
+/* ---------- More ---------- */
+function viewMore(){
+  const root = h('div',{class:'stack'}, h('h1',null,'More'));
+  const st = S.settings;
+  const mines = h('section',{class:'card flush'});
+  mines.append(h('div',{class:'sec-h'}, h('div',null, h('h2',null,'Mines and requirements'), h('p',{class:'xs muted'},'What each mine asks for. Workers are checked against the mine you pick.')),
+    h('button',{type:'button', class:'btn sm primary', onclick:()=>openMineForm(null)}, icon('plus',16), 'Add')));
+  const ml = h('div',{class:'list'});
+  if (!st.mines.length) ml.append(h('div',{class:'empty small'},'No mines yet.'));
+  for (const m of st.mines) ml.append(h('button',{type:'button', class:'li', onclick:()=>openMineForm(m)},
+    h('div',{class:'main'}, h('div',{class:'t'}, m.name), h('div',{class:'s'}, `${plural(m.company.length,'company document')} · ${plural(m.worker.length,'worker document')} per worker`)),
+    m.id===st.activeMine ? h('span',{class:'tag'},'Selected') : null, h('span',{class:'muted'}, icon('chev',18))));
+  mines.append(ml); root.append(mines);
+
+  const warnSel = h('select',{id:'warnDays'}, WARN_OPTIONS.map(n=>h('option',{value:n, selected:n===st.warnDays}, `${n} days before expiry`)));
+  warnSel.addEventListener('change', ()=>{ saveSettings({...S.settings, warnDays:Number(warnSel.value)}).then(()=>toast('Warning period saved.')).catch(()=>{}); softRender(); });
+  root.append(h('section',{class:'card'}, h('h2',{style:'margin-bottom:8px'},'Warnings'), h('label',{class:'lbl', for:'warnDays'},'Start warning me'), warnSel,
+    h('p',{class:'hint'},'Documents inside this window show as Expiring on every screen and in the reminders list.')));
+
+  root.append(h('section',{class:'card flush'}, h('div',{class:'sec-h'}, h('div',null, h('h2',null,'Document types'), h('p',{class:'xs muted'},'The lists you pick from when adding a document.')),
+    h('button',{type:'button', class:'btn sm', onclick:openTypesForm}, icon('edit',16), 'Edit')),
+    h('div',{style:'padding:0 14px 14px'}, h('p',{class:'small muted'}, `${plural(st.companyTypes.length,'company type')} · ${plural(st.workerTypes.length,'worker type')}`))));
+
+  const data = h('section',{class:'card stack',style:'gap:10px'}, h('h2',null,'Your data'));
+  data.append(h('button',{type:'button', class:'btn block', onclick:exportCsv}, icon('download',18), 'Export all documents (CSV)'));
+  const hasSample = (S.profile && S.profile.sample) || S.companyDocs.some(d=>d.sample) || S.workers.some(w=>w.sample);
+  if (hasSample){
+    const b = h('button',{type:'button', class:'btn danger block'}, 'Remove sample data');
+    armConfirm(b, 'Remove sample data', 'Tap again to remove sample data', removeSample);
+    data.append(b, h('p',{class:'hint'},'Removes the sample company, its documents and the sample workers, including anything you attached to them.'));
+  } else data.append(h('button',{type:'button', class:'btn block', onclick:loadSample}, 'Load sample data for a demo'));
+  root.append(data);
+
+  root.append(h('section',{class:'card sec'}, h('h2',{style:'margin-bottom:8px'},'Security and privacy'),
+    h('ul',{style:'margin:0;padding-left:18px;font-size:14px'},
+      S.store.kind==='device'
+        ? h('li',null, h('b',null,'Stored on this device only. '), 'Records and copies stay in this browser on this device. MineReady has no server and nothing is uploaded. Clearing the browser\'s website data deletes them, so export the CSV and contractor files regularly.')
+        : h('li',null, h('b',null,'Private to your account. '), 'Your records are stored in a space only your signed-in account can read. Other people using MineReady, including its owner, cannot see them.'),
+      h('li',null, h('b',null,'Photo privacy. '), 'Photos are re-encoded on your phone before upload, which removes hidden data such as GPS location.'),
+      h('li',null, h('b',null,'Files made on your device. '), 'The contractor file PDF and ZIP are built in your browser and only saved where you choose.'),
+      h('li',null, h('b',null,'Safe display and exports. '), 'Text is always shown as plain text, inputs are checked, and the CSV export blocks spreadsheet formula tricks.'),
+      h('li',null, h('b',null,'No trackers. '), 'MineReady loads no analytics or advertising scripts.')),
+    h('p',{class:'hint',style:'margin-top:8px'}, 'For production: company accounts with several users, mine-side access to submitted files, SMS and email reminders, and compliance with the Data Protection Act No. 3 of 2021.'), h('p',{class:'hint',style:'margin-top:8px'}, h('a',{href:'privacy.html',target:'_blank',rel:'noopener'},'Privacy policy'), ' · ', h('a',{href:'terms.html',target:'_blank',rel:'noopener'},'Terms of use'))));
+  root.append(h('p',{class:'xs muted',style:'text-align:center'}, `MineReady v${APP_VERSION} · ${S.store.kind==='cloud' ? 'saved to your account' : S.store.kind==='device' ? 'saved on this device' : 'demo mode, not saved'}`));
+  return root;
+}
+
+/* =========================================================================
+   Modals and forms
+   ========================================================================= */
+let lastFocus = null;
+function openModal(title, body){
+  closeModal(true); S.modalOpen = true; lastFocus = document.activeElement;
+  const close = h('button',{type:'button', class:'iconbtn', 'aria-label':'Close', onclick:()=>closeModal()}, icon('x',20));
+  const dlg = h('div',{class:'modal', role:'dialog', 'aria-modal':'true', 'aria-label':title}, h('div',{class:'mh'}, h('h2',null,title), close), body);
+  const bg = h('div',{class:'modal-bg', onclick:e=>{ if (e.target===bg) closeModal(); }}, dlg);
+  $('modalRoot').append(bg);
+  document.addEventListener('keydown', escClose);
+  setTimeout(()=>{ const f = dlg.querySelector('input:not([type=checkbox]):not(.sr),select,textarea'); (f||close).focus(); }, 30);
+}
+function escClose(e){ if (e.key==='Escape') closeModal(); }
+function closeModal(silent){
+  const m = $('modalRoot'); const had = !!m.firstChild; m.textContent = '';
+  document.removeEventListener('keydown', escClose);
+  if (!had) return;
+  S.modalOpen = false;
+  if (!silent){ if (S.dirty){ S.dirty = false; softRender(); } if (lastFocus && lastFocus.isConnected) try{ lastFocus.focus(); }catch{} }
+}
+function field(label, input, hint, id){ if (id) input.id = id; return h('div',{class:'field'}, h('label',{class:'lbl', for:id||null}, label), input, hint ? h('div',{class:'hint'}, hint) : null); }
+
+function openCompanyForm(){
+  const p = S.profile || {};
+  const name = h('input',{type:'text', maxlength:100, value:p.name||'', placeholder:'e.g. Trans Mechanical Mining Ltd', autocomplete:'organization'});
+  const pacra = h('input',{type:'text', maxlength:40, value:p.pacra||'', placeholder:'Registration number'});
+  const tpin = h('input',{type:'text', maxlength:20, value:p.tpin||'', inputmode:'numeric', placeholder:'10-digit TPIN'});
+  const contact = h('input',{type:'text', maxlength:80, value:p.contact||'', placeholder:'Who handles contractor files'});
+  const phone = h('input',{type:'tel', maxlength:24, value:p.phone||'', placeholder:'e.g. 0961 000 000'});
+  const email = h('input',{type:'email', maxlength:100, value:p.email||''});
+  const address = h('input',{type:'text', maxlength:160, value:p.address||'', placeholder:'Plot and road, town'});
+  const err = h('div',{class:'err', role:'alert'});
+  const save = h('button',{type:'submit', class:'btn primary block'}, 'Save company details');
+  const form = h('form',{novalidate:true},
+    field('Company name', name, null, 'cf-name'), h('div',{class:'grid2'}, field('PACRA reg. no.', pacra, null, 'cf-pacra'), field('TPIN', tpin, null, 'cf-tpin')),
+    field('Contact person', contact, null, 'cf-contact'), h('div',{class:'grid2'}, field('Phone', phone, null, 'cf-phone'), field('Email', email, null, 'cf-email')),
+    field('Physical address', address, null, 'cf-addr'), err, save);
+  form.addEventListener('submit', async ev=>{
+    ev.preventDefault(); err.textContent = '';
+    const next = {name:clean(name.value,100), pacra:clean(pacra.value,40), tpin:clean(tpin.value,20), contact:clean(contact.value,80), phone:clean(phone.value,24).replace(/[^0-9+ ]/g,''), email:clean(email.value,100), address:clean(address.value,160), sample: !!p.sample, updatedAt:Date.now()};
+    if (next.name.length < 2){ err.textContent = 'Enter the company name.'; name.focus(); return; }
+    if (next.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(next.email)){ err.textContent = 'Check the email address.'; email.focus(); return; }
+    save.disabled = true; save.textContent = 'Saving…';
+    try{
+      if (!S.settingsSaved) await saveSettings(S.settings);
+      await S.store.put('profile', next); closeModal(); toast('Company details saved.');
+    }catch(e){ err.textContent = errMsg(e); save.disabled = false; save.textContent = 'Save company details'; }
+  });
+  openModal(S.profile ? 'Company details' : 'Set up your company', form);
+}
+
+function openDocForm({holder, rec, type, mine}){
+  const isCompany = holder==='company';
+  const w = isCompany ? null : S.workers.find(x=>x.id===holder);
+  if (!isCompany && !w){ toast('That worker was not found.', true); return; }
+  const types = isCompany ? S.settings.companyTypes : S.settings.workerTypes.map(t=>t.name);
+  const cur = rec ? deep(rec) : {type:type||'', mine:mine||'', ref:'', issued:'', expires:'', noExpiry:false, file:null, notes:''};
+  const typeOpts = uniq([...types, ...(cur.type && !types.includes(cur.type) ? [cur.type] : [])]);
+  const typeSel = h('select',null, h('option',{value:''},'Choose the document…'), typeOpts.map(t=>h('option',{value:t, selected:t===cur.type}, t)), h('option',{value:'__other'},'Other type…'));
+  const other = h('input',{type:'text', maxlength:80, placeholder:'Name of the document', 'aria-label':'Other document type', style:'margin-top:8px;display:none'});
+  const mineSel = mineSelect(cur.mine || S.settings.activeMine, ()=>{}, 'df-mine');
+  const mineWrap = field('Mine this induction is for', mineSel, null, 'df-mine');
+  const refIn = h('input',{type:'text', maxlength:60, value:cur.ref, placeholder:'Certificate or reference number'});
+  const issued = h('input',{type:'date', value:cur.issued});
+  const expires = h('input',{type:'date', value:cur.expires});
+  const noExp = h('input',{type:'checkbox', checked:cur.noExpiry});
+  const expWrap = field('Expiry date', expires, null, 'df-exp');
+  const noExpWrap = h('label',{class:'check', style:'margin:-6px 0 10px'}, noExp, 'Expiry not applicable (this document never expires)');
+  const notes = h('textarea',{maxlength:500, placeholder:'Optional notes', style:'min-height:64px'}, cur.notes||'');
+  const curType = () => typeSel.value==='__other' ? clean(other.value,80) : typeSel.value;
+  const sync = () => {
+    other.style.display = typeSel.value==='__other' ? '' : 'none';
+    mineWrap.style.display = (!isCompany && workerType(curType()).perMine) ? '' : 'none';
+    noExpWrap.style.display = (noExpiryAllowed(curType()) || noExp.checked) ? '' : 'none';
+    expires.disabled = noExp.checked; expWrap.style.opacity = noExp.checked ? '.5' : '1';
+  };
+  typeSel.addEventListener('change', sync); other.addEventListener('input', sync); noExp.addEventListener('change', sync);
+
+  // file handling
+  let file = cur.file, newPrep = null, removeOld = false;
+  const fileInfo = h('div',{class:'hint'});
+  const fileBox = h('div',{class:'filebox'});
+  const input = h('input',{type:'file', accept:'image/*,application/pdf', class:'sr', id:'df-file'});
+  const drawFile = async () => {
+    fileBox.textContent = '';
+    const shown = newPrep || file;
+    const thumb = h('div',{class:'thumb'}, icon(shown && shown.type==='application/pdf' ? 'file' : 'upload', 24));
+    fileBox.append(thumb);
+    const info = h('div',{style:'flex:1;min-width:140px'});
+    if (shown){
+      info.append(h('div',{class:'small',style:'font-weight:600;overflow-wrap:anywhere'}, shown.name || (shown.type==='application/pdf' ? 'PDF document' : 'Photo')),
+        h('div',{class:'xs muted'}, (shown.type==='application/pdf' ? 'PDF' : 'Photo') + (newPrep ? ' · will upload when you save' : ' · attached')));
+      if (shown.type==='image/jpeg'){
+        try{ const url = newPrep ? URL.createObjectURL(newPrep.blob) : await S.store.fileUrl(file); if (url){ const img = h('img',{class:'thumb', src:url, alt:''}); thumb.replaceWith(img); } }catch{}
+      }
+    } else info.append(h('div',{class:'small',style:'font-weight:600'},'No copy attached'), h('div',{class:'xs muted'},'Take a photo of the certificate or choose a PDF.'));
+    fileBox.append(info);
+    const btns = h('div',{class:'row',style:'gap:6px'});
+    btns.append(h('label',{for:'df-file', class:'btn sm', style:'cursor:pointer'}, icon(shown ? 'edit' : 'upload', 16), shown ? 'Replace' : 'Add photo or PDF'));
+    if (!newPrep && file) btns.append(h('button',{type:'button', class:'btn sm', onclick:()=>openFileViewer(file, cur.type)}, 'View'));
+    if (shown) btns.append(h('button',{type:'button', class:'btn sm danger', 'aria-label':'Remove file', onclick:()=>{ if (newPrep){ newPrep=null; } else { removeOld = true; file = null; } input.value=''; fileInfo.textContent=''; drawFile(); }}, icon('trash',16)));
+    fileBox.append(btns);
+  };
+  input.addEventListener('change', async ()=>{
+    const f = input.files && input.files[0]; if (!f) return;
+    fileInfo.textContent = 'Preparing…';
+    try{ newPrep = await prepareUpload(f); fileInfo.textContent = newPrep.type==='image/jpeg' ? `Photo ready (${Math.round(newPrep.blob.size/1024)} KB, location data removed).` : `PDF ready (${Math.round(newPrep.blob.size/1024)} KB).`; }
+    catch(e){ newPrep = null; fileInfo.textContent = errMsg(e); }
+    drawFile();
+  });
+  drawFile();
+
+  const err = h('div',{class:'err', role:'alert'});
+  const save = h('button',{type:'submit', class:'btn primary block'}, 'Save document');
+  const form = h('form',{novalidate:true},
+    h('p',{class:'small muted',style:'margin:-6px 0 12px'}, isCompany ? ((S.profile&&S.profile.name) || 'Company document') : w.name),
+    h('div',{class:'field'}, h('label',{class:'lbl', for:'df-type'},'Document'), typeSel, other),
+    mineWrap,
+    field('Certificate / reference no.', refIn, null, 'df-ref'),
+    h('div',{class:'grid2'}, field('Issue date', issued, null, 'df-iss'), expWrap),
+    noExpWrap,
+    h('p',{class:'hint',style:'margin:-6px 0 12px'}, 'Without a copy attached, this document counts as Incomplete and does not clear the worker.'),
+    h('div',{class:'field'}, h('span',{class:'lbl'},'Copy of the document'), fileBox, input, fileInfo),
+    field('Notes', notes, null, 'df-notes'),
+    err, save);
+  typeSel.id = 'df-type';
+  sync();
+  form.addEventListener('submit', async ev=>{
+    ev.preventDefault(); err.textContent = '';
+    const t = curType();
+    if (!t){ err.textContent = 'Choose which document this is.'; typeSel.focus(); return; }
+    const perMine = !isCompany && workerType(t).perMine;
+    if (perMine && !mineById(mineSel.value)){ err.textContent = 'Choose the mine this induction is for.'; return; }
+    if (noExp.checked && !noExpiryAllowed(t)){ err.textContent = 'This document type must have an expiry date. Untick "Expiry not applicable" and enter the date. (Types allowed to never expire are set under More > Document types.)'; return; }
+    if (!noExp.checked && !isDate(expires.value)){ err.textContent = noExpiryAllowed(t) ? 'Enter the expiry date, or tick "Expiry not applicable".' : 'Enter the expiry date.'; expires.focus(); return; }
+    if (issued.value && !isDate(issued.value)){ err.textContent = 'Check the issue date.'; return; }
+    if (issued.value && expires.value && !noExp.checked && expires.value < issued.value){ err.textContent = 'The expiry date is before the issue date.'; return; }
+    save.disabled = true; save.textContent = newPrep ? 'Uploading…' : 'Saving…';
+    const oldFile = rec && rec.file;
+    let uploaded = null;
+    try{
+      if (newPrep) uploaded = await S.store.upload(newPrep);
+      const out = {
+        id: rec ? rec.id : randId(10), type:t, mine: perMine ? mineSel.value : '', ref: clean(refIn.value,60),
+        issued: isDate(issued.value) ? issued.value : '', expires: noExp.checked ? '' : expires.value, noExpiry: noExp.checked,
+        file: uploaded || file || null, notes: cleanMulti(notes.value,500), sample: !!(rec && rec.sample), sampleNoCopy: !!(rec && rec.sampleNoCopy) && !(uploaded || file), updatedAt: Date.now()
+      };
+      if (isCompany){
+        if (!S.settingsSaved) await saveSettings(S.settings);
+        await S.store.put('cd_' + out.id, out);
+      } else {
+        const latest = S.workers.find(x=>x.id===w.id) || w;
+        const nw = deep(latest); const i = nw.docs.findIndex(d=>d.id===out.id);
+        if (i>=0) nw.docs[i] = out; else nw.docs.push(out);
+        if (nw.docs.length > 80){ err.textContent = 'This worker has too many documents. Remove old ones first.'; if (uploaded) S.store.removeFile(uploaded); save.disabled=false; save.textContent='Save document'; return; }
+        await S.store.put('w_' + nw.id, nw);
+      }
+      if (oldFile && (uploaded || removeOld)) S.store.removeFile(oldFile);
+      closeModal(); toast('Document saved.');
+    }catch(e){
+      if (uploaded) S.store.removeFile(uploaded);
+      err.textContent = errMsg(e); save.disabled = false; save.textContent = 'Save document';
+    }
+  });
+  if (rec){
+    const del = h('button',{type:'button', class:'btn danger block', style:'margin-top:10px'}, icon('trash',16), 'Delete this document');
+    armConfirm(del, 'Delete this document', 'Tap again to delete', async ()=>{
+      del.disabled = true;
+      try{
+        if (isCompany) await S.store.del('cd_' + rec.id);
+        else { const latest = S.workers.find(x=>x.id===w.id) || w; const nw = deep(latest); nw.docs = nw.docs.filter(d=>d.id!==rec.id); await S.store.put('w_' + nw.id, nw); }
+        if (rec.file) S.store.removeFile(rec.file);
+        closeModal(); toast('Document deleted.');
+      }catch(e){ err.textContent = errMsg(e); del.disabled = false; }
+    });
+    form.append(del);
+  }
+  openModal(rec ? 'Update document' : 'Add document', form);
+}
+
+async function openFileViewer(file, title){
+  const body = h('div',{class:'stack',style:'gap:10px'}, h('p',{class:'muted small'},'Loading…'));
+  openModal(title || 'Document', body);
+  try{
+    const url = await S.store.fileUrl(file);
+    body.textContent = '';
+    if (!url){ body.append(h('p',{class:'muted'},'This file could not be loaded.')); return; }
+    if (file.type==='application/pdf' && ANDROID) body.append(h('p',{class:'small'}, file.name || 'PDF document'), h('button',{type:'button', class:'btn outline', onclick:async ()=>{ try{ await bridgeSend(safeName(title||'document') + '.pdf', await S.store.fileBlob(file), 'open'); }catch(e){ toast(errMsg(e), true); } }}, icon('file',18), 'Open the PDF'));
+    else if (file.type==='application/pdf') body.append(h('p',{class:'small'}, file.name || 'PDF document'), h('a',{class:'btn outline', href:url, target:'_blank', rel:'noopener'}, icon('file',18), 'Open the PDF'));
+    else body.append(h('img',{class:'preview', src:url, alt:'Copy of ' + (title||'document')}));
+  }catch(e){ body.textContent=''; body.append(h('p',{class:'err'}, errMsg(e))); }
+}
+
+function openWorkerForm(w){
+  const name = h('input',{type:'text', maxlength:80, value:w?w.name:'', placeholder:'Full name', autocomplete:'off'});
+  const job = h('input',{type:'text', maxlength:60, value:w?w.job:'', placeholder:'e.g. Fitter, Electrician'});
+  const emp = h('input',{type:'text', maxlength:30, value:w?w.empNo:''});
+  const phone = h('input',{type:'tel', maxlength:24, value:w?w.phone:'', placeholder:'e.g. 0977 000 000'});
+  const mine = activeMine();
+  const mineReq = new Set(mine ? mine.worker : []);
+  const extras = S.settings.workerTypes.filter(t=>!t.perMine);
+  const boxes = extras.map(t=>{
+    const byMine = mineReq.has(t.name);
+    const cb = h('input',{type:'checkbox', value:t.name, checked: byMine || (w && w.required.includes(t.name)), disabled: byMine});
+    return {t, cb, el: h('label',{class:'check' + (byMine ? ' dis':'')}, cb, t.name + (byMine ? ` (required by ${mine.name})` : ''))};
+  });
+  const err = h('div',{class:'err', role:'alert'});
+  const save = h('button',{type:'submit', class:'btn primary block'}, w ? 'Save worker' : 'Add worker');
+  const form = h('form',{novalidate:true},
+    field('Full name', name, null, 'wf-name'),
+    h('div',{class:'grid2'}, field('Job title', job, null, 'wf-job'), field('Employee no.', emp, null, 'wf-emp')),
+    field('Phone (for WhatsApp reminders)', phone, 'Zambian numbers like 0977 123 456 work as they are.', 'wf-phone'),
+    h('div',{class:'field'}, h('span',{class:'lbl'},'Extra certificates this worker must hold'), h('div',{class:'hint',style:'margin:-2px 0 6px'},'For example a rigger needs a rigging certificate. These are checked at every mine.'), boxes.map(b=>b.el)),
+    err, save);
+  form.addEventListener('submit', async ev=>{
+    ev.preventDefault(); err.textContent = '';
+    const nm = clean(name.value,80);
+    if (nm.length < 2){ err.textContent = "Enter the worker's name."; name.focus(); return; }
+    const ph = clean(phone.value,24).replace(/[^0-9+ ]/g,'');
+    if (ph && !waNumber(ph)){ err.textContent = 'Check the phone number (for example 0977 123 456).'; phone.focus(); return; }
+    const latest = w ? (S.workers.find(x=>x.id===w.id) || w) : null;
+    const out = {
+      id: latest ? latest.id : randId(10), name:nm, job:clean(job.value,60), empNo:clean(emp.value,30), phone:ph,
+      required: boxes.filter(b=>b.cb.checked && !b.cb.disabled).map(b=>b.t.name).concat(latest ? latest.required.filter(r=>!extras.some(t=>t.name===r)) : []),
+      docs: latest ? deep(latest.docs) : [], sample: !!(latest && latest.sample), createdAt: latest ? latest.createdAt : Date.now()
+    };
+    save.disabled = true; save.textContent = 'Saving…';
+    try{
+      if (!S.settingsSaved) await saveSettings(S.settings);
+      await S.store.put('w_' + out.id, out); closeModal(); toast(w ? 'Worker saved.' : 'Worker added.');
+      if (!w) go('worker-' + out.id);
+    }catch(e){ err.textContent = errMsg(e); save.disabled = false; save.textContent = w ? 'Save worker' : 'Add worker'; }
+  });
+  if (w){
+    const del = h('button',{type:'button', class:'btn danger block', style:'margin-top:10px'}, icon('trash',16), 'Remove this worker');
+    armConfirm(del, 'Remove this worker', 'Tap again to remove the worker and their documents', async ()=>{
+      del.disabled = true;
+      try{ const latest = S.workers.find(x=>x.id===w.id) || w; await S.store.del('w_' + w.id); latest.docs.forEach(d=>d.file && S.store.removeFile(d.file)); closeModal(); toast('Worker removed.'); go('workers'); }
+      catch(e){ err.textContent = errMsg(e); del.disabled = false; }
+    });
+    form.append(del);
+  }
+  openModal(w ? 'Edit worker' : 'Add worker', form);
+}
+
+function slug(s){ return String(s).toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,30) || 'mine'; }
+function openMineForm(m){
+  const name = h('input',{type:'text', maxlength:60, value:m?m.name:'', placeholder:'e.g. Kansanshi Mine'});
+  const cBoxes = S.settings.companyTypes.map(t=>{ const cb = h('input',{type:'checkbox', value:t, checked: m ? m.company.includes(t) : DEFAULT_REQ_COMPANY.includes(t)}); return {t, cb, el:h('label',{class:'check'}, cb, t)}; });
+  const wBoxes = S.settings.workerTypes.map(t=>{ const cb = h('input',{type:'checkbox', value:t.name, checked: m ? m.worker.includes(t.name) : DEFAULT_REQ_WORKER.includes(t.name)}); return {t:t.name, cb, el:h('label',{class:'check'}, cb, t.name + (t.perMine ? ' (for this mine)' : ''))}; });
+  const err = h('div',{class:'err', role:'alert'});
+  const save = h('button',{type:'submit', class:'btn primary block'}, 'Save mine');
+  const form = h('form',{novalidate:true}, field('Mine name', name, null, 'mf-name'),
+    h('div',{class:'field'}, h('span',{class:'lbl'},'Company documents this mine requires'), cBoxes.map(b=>b.el)),
+    h('div',{class:'field'}, h('span',{class:'lbl'},'Documents every worker needs'), wBoxes.map(b=>b.el)),
+    err, save);
+  form.addEventListener('submit', async ev=>{
+    ev.preventDefault(); err.textContent = '';
+    const nm = clean(name.value,60); if (nm.length < 2){ err.textContent = 'Enter the mine name.'; name.focus(); return; }
+    const mines = deep(S.settings.mines);
+    if (mines.some(x=>x.name.toLowerCase()===nm.toLowerCase() && (!m || x.id!==m.id))){ err.textContent = 'A mine with that name already exists.'; return; }
+    const rec = {id: m ? m.id : uniqueMineId(nm, mines), name:nm, company:cBoxes.filter(b=>b.cb.checked).map(b=>b.t), worker:wBoxes.filter(b=>b.cb.checked).map(b=>b.t)};
+    if (m){ const i = mines.findIndex(x=>x.id===m.id); mines[i] = rec; } else { if (mines.length >= 20){ err.textContent = 'You can set up at most 20 mines.'; return; } mines.push(rec); }
+    save.disabled = true; save.textContent = 'Saving…';
+    try{ await saveSettings({...S.settings, mines, activeMine: S.settings.activeMine || rec.id}); closeModal(); toast('Mine saved.'); }
+    catch(e){ err.textContent = errMsg(e); save.disabled = false; save.textContent = 'Save mine'; }
+  });
+  if (m){
+    const del = h('button',{type:'button', class:'btn danger block', style:'margin-top:10px'}, icon('trash',16), 'Remove this mine');
+    armConfirm(del, 'Remove this mine', 'Tap again to remove', async ()=>{
+      const mines = S.settings.mines.filter(x=>x.id!==m.id);
+      const am = S.settings.activeMine===m.id ? (mines[0] ? mines[0].id : '') : S.settings.activeMine;
+      try{ await saveSettings({...S.settings, mines, activeMine:am}); closeModal(); toast('Mine removed.'); } catch(e){ err.textContent = errMsg(e); }
+    });
+    form.append(del, h('p',{class:'hint'},'Inductions recorded for this mine stay on the workers.'));
+  }
+  openModal(m ? 'Edit mine' : 'Add a mine', form);
+}
+function uniqueMineId(name, mines){ let base = slug(name), id = base, i = 2; while (mines.some(x=>x.id===id)) id = `${base}-${i++}`; return id; }
+
+function openTypesForm(){
+  const st = S.settings;
+  const ct = h('textarea',{style:'min-height:160px'}, st.companyTypes.join('\n'));
+  const wt = h('textarea',{style:'min-height:160px'}, st.workerTypes.map(t=>t.name + (t.perMine ? ' *' : '')).join('\n'));
+  const nx = h('textarea',{style:'min-height:90px'}, (st.noExpiryTypes||[]).join('\n'));
+  const err = h('div',{class:'err', role:'alert'});
+  const save = h('button',{type:'submit', class:'btn primary block'}, 'Save document types');
+  const form = h('form',{novalidate:true},
+    field('Company document types', ct, 'One per line.', 'tf-c'),
+    field('Worker document types', wt, 'One per line. Add " *" after a type that is issued per mine, like site inductions.', 'tf-w'),
+    field('Types that never expire', nx, 'One per line, spelled exactly as above. Only these can be saved with "Expiry not applicable". Every other document must have an expiry date or it counts as Incomplete.', 'tf-nx'), err, save);
+  form.addEventListener('submit', async ev=>{
+    ev.preventDefault(); err.textContent = '';
+    const companyTypes = uniq(ct.value.split('\n').map(x=>clean(x,80)).filter(Boolean)).slice(0,40);
+    const seen = new Set();
+    const workerTypes = wt.value.split('\n').map(x=>{ const raw = clean(x,82); const perMine = /\s\*$/.test(raw) || raw.endsWith('*'); const name = clean(raw.replace(/\s*\*$/,''),80); return {name, perMine}; }).filter(t=>t.name && !seen.has(t.name) && seen.add(t.name)).slice(0,40);
+    if (!companyTypes.length || !workerTypes.length){ err.textContent = 'Keep at least one type in each list.'; return; }
+    save.disabled = true;
+    const allNames = new Set([...companyTypes, ...workerTypes.map(t=>t.name)]);
+    const noExpiryTypes = uniq(nx.value.split('\n').map(x=>clean(x,80)).filter(x=>x && allNames.has(x))).slice(0,40);
+    try{ await saveSettings({...S.settings, companyTypes, workerTypes, noExpiryTypes}); closeModal(); toast('Document types saved.'); }
+    catch(e){ err.textContent = errMsg(e); save.disabled = false; }
+  });
+  openModal('Document types', form);
+}
+
+/* ---------- sample data ---------- */
+function sampleData(){
+  const r = (type, exp, extra) => ({id:randId(10), type, ref:'', issued:'', expires: exp==null ? '' : addDays(exp), noExpiry: exp==null, file:null, notes:'', mine:'', sample:true, updatedAt:Date.now(), ...extra});
+  const profile = {name:'Demo Contractor Ltd', pacra:'120180001234', tpin:'1000123456', contact:'Operations manager', phone:'', email:'', address:'Industrial Area, Ndola', sample:true, updatedAt:Date.now()};
+  const companyDocs = [
+    r('PACRA certificate of incorporation', null, {ref:'120180001234', issued:'2018-03-14'}),
+    r('PACRA annual return', 113, {ref:'AR-2026-0451', issued:addDays(-252)}),
+    r('ZRA tax clearance certificate', 18, {ref:'TCC-26-118734', issued:addDays(-347)}),
+    r('NAPSA compliance certificate', 220, {ref:'NAPSA-CC-55821', issued:addDays(-145)})
+  ];
+  const K = 'kansanshi', L = 'lumwana';
+  const w = (name, job, empNo, required, docs) => ({id:randId(10), name, job, empNo, phone:'', required, docs, sample:true, createdAt:Date.now()});
+  const workers = [
+    w('Joseph Mwansa','Fitter','DC-014',['Working at heights'],[r('Medical fitness certificate',140,{ref:'MED-2026-0412', issued:addDays(-225)}), r('Site induction',110,{mine:K, ref:'KS-IND-8831', issued:addDays(-255)}), r('Site induction',60,{mine:L, ref:'LM-IND-2290', issued:addDays(-305)}), r('Working at heights',270,{ref:'WAH-1187', issued:addDays(-460)})]),
+    w('Mary Banda','Electrician','DC-022',[],[r('Medical fitness certificate',13,{ref:'MED-2025-1180', issued:addDays(-352)}), r('Site induction',200,{mine:K, ref:'KS-IND-9012', issued:addDays(-165)})]),
+    w('Peter Chanda','Welder','DC-031',['Welding certificate'],[r('Medical fitness certificate',170,{ref:'MED-2026-0533', issued:addDays(-195)}), r('Site induction',-8,{mine:K, ref:'KS-IND-7741', issued:addDays(-373)}), r('Welding certificate',330,{ref:'TEVETA-WD-0721', issued:addDays(-400)})]),
+    w('Grace Phiri','Safety officer','DC-005',['First aid'],[r('Medical fitness certificate',230,{ref:'MED-2026-0702', issued:addDays(-135)}), r('Site induction',40,{mine:K, ref:'KS-IND-8120', issued:addDays(-325)}), r('First aid',300,{ref:'FA-3391', issued:addDays(-430)})]),
+    w('Moses Tembo','Rigger','DC-040',['Rigging and slinging'],[r('Medical fitness certificate',80,{ref:'MED-2026-0291', issued:addDays(-285)}), r('Site induction',130,{mine:K, ref:'KS-IND-8944', issued:addDays(-235)})]),
+    w('Ruth Zulu','Driver','DC-052',[],[r('Medical fitness certificate',190,{ref:'MED-2026-0815', issued:addDays(-175), sampleNoCopy:true}), r('Site induction',0,{mine:K, ref:'KS-IND-9105', issued:addDays(-30), expires:'', noExpiry:false})]),
+    w('Daniel Mulenga','Boilermaker','DC-047',['Working at heights'],[r('Medical fitness certificate',-20,{ref:'MED-2025-0977', issued:addDays(-385)}), r('Site induction',23,{mine:K, ref:'KS-IND-8002', issued:addDays(-342)}), r('Working at heights',350,{ref:'WAH-1240', issued:addDays(-380)})])
+  ];
+  return {profile, companyDocs, workers};
+}
+async function loadSample(){
+  if (S.busy) return; S.busy = true; toast('Loading sample data…');
+  try{
+    const sd = sampleData();
+    if (!S.settingsSaved) await saveSettings(S.settings);
+    if (!S.profile) await S.store.put('profile', sd.profile);
+    for (const d of sd.companyDocs){ await S.store.put('cd_' + d.id, d); await sleep(120); }
+    for (const w of sd.workers){ await S.store.put('w_' + w.id, w); await sleep(120); }
+    toast('Sample data loaded. Remove it any time under More.');
+    go('home');
+  }catch(e){ toast(errMsg(e), true); }
+  S.busy = false; softRender();
+}
+async function removeSample(){
+  if (S.busy) return; S.busy = true;
+  try{
+    for (const d of S.companyDocs.filter(x=>x.sample)){ await S.store.del('cd_' + d.id); if (d.file) S.store.removeFile(d.file); await sleep(100); }
+    for (const w of S.workers.filter(x=>x.sample)){ await S.store.del('w_' + w.id); w.docs.forEach(d=>d.file && S.store.removeFile(d.file)); await sleep(100); }
+    if (S.profile && S.profile.sample) await S.store.del('profile');
+    toast('Sample data removed.');
+  }catch(e){ toast(errMsg(e), true); }
+  S.busy = false; softRender();
+}
+
+/* ---------- CSV export ---------- */
+function csvCell(v){ let s = String(v ?? ''); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s; }
+async function exportCsv(){
+  const head = ['Holder','Job title','Document','Mine','Reference no.','Issued','Expires','Status','Copy attached'];
+  const rows = [];
+  const add = (holder, job, d) => { const st = statusOf(d); rows.push([holder, job, d.type, d.mine ? (mineById(d.mine)||{name:d.mine}).name : '', d.ref, d.issued, d.noExpiry ? 'No expiry' : d.expires, statusText(st,d), d.file ? (d.file.type==='application/pdf'?'PDF':'Photo') : 'No']); };
+  for (const d of S.companyDocs) add((S.profile&&S.profile.name)||'Company', '', d);
+  for (const w of S.workers) for (const d of w.docs) add(w.name, w.job, d);
+  const text = '\uFEFF' + [head, ...rows].map(r=>r.map(csvCell).join(',')).join('\r\n');
+  if (S.downloads){
+    try{ const res = await S.downloads.save({filename:`MineReady-documents_${ymd(today0())}.csv`, data:text}); toast(ANDROID ? 'CSV saved to ' + ((res && res.where) || 'Downloads/MineReady') : 'CSV saved.'); return; }
+    catch(e){ if (e && e.code==='declined'){ toast('Download cancelled.'); return; } }
+  }
+  try{ await navigator.clipboard.writeText(text.replace(/^\uFEFF/,'')); toast(`Copied ${rows.length} rows. Paste into Excel or Google Sheets.`); }
+  catch{ openModal('CSV export', h('div',null, h('p',{class:'muted small',style:'margin-bottom:8px'},'Select all and copy:'), h('textarea',{readonly:true, style:'min-height:260px;font-family:monospace;font-size:12px'}, text))); }
+}
+
+/* =========================================================================
+   Contractor file: PDF (built on the device) and ZIP pack
+   ========================================================================= */
+function safeName(s){ return String(s).normalize('NFKD').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40) || 'file'; }
+async function jpegBytes(blob, max, q){ const r = await toJpeg(blob, max, q); return {bytes:new Uint8Array(await r.blob.arrayBuffer()), w:r.w, h:r.h}; }
+async function samplePlaceholder(e){
+  const cv = document.createElement('canvas'); cv.width = 1200; cv.height = 850;
+  const g = cv.getContext && cv.getContext('2d'); if (!g) return null;
+  g.fillStyle = '#FBFAF5'; g.fillRect(0,0,1200,850);
+  g.strokeStyle = '#0F5F74'; g.lineWidth = 14; g.strokeRect(30,30,1140,790); g.lineWidth = 3; g.strokeRect(56,56,1088,738);
+  g.textAlign = 'center'; g.fillStyle = '#15232A';
+  const fitFont = (text, px, weight, family, maxW) => { let s = px; do { g.font = `${weight} ${s}px ${family}`; s -= 2; } while (g.measureText(text).width > maxW && s > 16); };
+  const title = e.title.toUpperCase();
+  fitFont(title, 52, 'bold', 'Georgia, serif', 1000); g.fillText(title, 600, 190);
+  g.font = '28px Arial, sans-serif'; g.fillStyle = '#47545A'; g.fillText('This is to certify that', 600, 285);
+  fitFont(e.holder, 48, 'bold', 'Georgia, serif', 1000); g.fillStyle = '#15232A'; g.fillText(e.holder, 600, 360);
+  g.font = '26px Arial, sans-serif'; g.fillStyle = '#47545A';
+  if (e.rec.ref) g.fillText('Certificate no. ' + e.rec.ref, 600, 440);
+  g.fillText(`Issued ${e.rec.issued ? fmtDate(e.rec.issued) : '–'}    ·    Valid until ${e.rec.noExpiry ? 'no expiry' : fmtDate(e.rec.expires)}`, 600, 490);
+  g.save(); g.translate(600, 600); g.rotate(-0.32); g.font = 'bold 150px Arial, sans-serif'; g.fillStyle = 'rgba(200,55,45,0.16)'; g.fillText('SAMPLE', 0, 0); g.restore();
+  g.font = '22px Arial, sans-serif'; g.fillStyle = '#7B848C'; g.fillText('Sample document generated by MineReady for demonstration only', 600, 760);
+  const b = await canvasToJpeg(cv, 0.85);
+  return {bytes:new Uint8Array(await b.arrayBuffer()), w:1200, h:850};
+}
+async function buildPlan(ev, chosen, prog){
+  const entries = [], attachments = [];
+  const coName = (S.profile && S.profile.name) || 'Company';
+  for (const c of ev.company) entries.push({section:'company', holder:coName, sub:'', title:c.type, rec:c.rec, status:c.status});
+  for (const x of chosen) for (const it of x.items) entries.push({section:'worker', holder:x.w.name, sub:x.w.job, title:it.label, rec:it.rec, status:it.status});
+  let i = 0;
+  for (const e of entries){
+    i++; e.n = i; e.img = null; e.attach = null; e.note = '';
+    const f = e.rec && e.rec.file;
+    prog(`Adding documents (${i} of ${entries.length})…`);
+    try{
+      if (f && f.type==='image/jpeg') e.img = await jpegBytes(await S.store.fileBlob(f), 1700, 0.85);
+      else if (f && f.type==='application/pdf'){
+        const bytes = new Uint8Array(await (await S.store.fileBlob(f)).arrayBuffer());
+        e.attach = `${pad2(i)}_${safeName(e.holder)}_${safeName(e.title)}.pdf`;
+        attachments.push({name:e.attach, bytes});
+      } else if (e.rec && e.rec.sample && hasCopy(e.rec)) e.img = await samplePlaceholder(e);
+    }catch(err){ e.note = 'The copy could not be loaded.'; }
+  }
+  const sample = !!((S.profile && S.profile.sample) || entries.some(e=>e.rec && e.rec.sample) || chosen.some(x=>x.w.sample));
+  const notCleared = ev.workers.filter(x=>!x.cleared).map(x=>({name:x.w.name, why:x.blockers.map(i=>`${i.label} ${statusWord(i.status)}`).join(', ')}));
+  return {mine:ev.mine, profile:S.profile || {name:coName}, entries, attachments, companyOk:ev.companyOk, workerCount:chosen.length, warnDays:S.settings.warnDays,
+    totalWorkers:ev.workers.length, clearedCount:ev.cleared, pct:ev.pct, notCleared, sample};
+}
+
+/* Helvetica glyph widths for ASCII 32..126 (from the standard AFM), used to fit and wrap text */
+const HELV = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278, 556,556,556,556,556,556,556,556,556,556, 278,278,584,584,584,556,1015,
+  667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,
+  278,278,278,469,556,333, 556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500, 334,260,334,584];
+const WIN = {0x20AC:0x80,0x201A:0x82,0x0192:0x83,0x201E:0x84,0x2026:0x85,0x2020:0x86,0x2021:0x87,0x02C6:0x88,0x2030:0x89,0x0160:0x8A,0x2039:0x8B,0x0152:0x8C,0x017D:0x8E,0x2018:0x91,0x2019:0x92,0x201C:0x93,0x201D:0x94,0x2022:0x95,0x2013:0x96,0x2014:0x97,0x02DC:0x98,0x2122:0x99,0x0161:0x9A,0x203A:0x9B,0x0153:0x9C,0x017E:0x9E,0x0178:0x9F};
+function toWin(s){ let out = ''; for (const ch of String(s ?? '')){ const c = ch.codePointAt(0); let b; if (c>=32 && c<127) b=c; else if (c>=0xA0 && c<=0xFF) b=c; else if (WIN[c]) b=WIN[c]; else if (c===9||c===10||c===13) b=32; else b=63; out += String.fromCharCode(b); } return out; }
+function pdfEsc(win){ return win.replace(/[\\()]/g, m=>'\\'+m); }
+function textW(s, size, bold){ const w = toWin(s); let t = 0; for (let i=0;i<w.length;i++){ const c = w.charCodeAt(i); t += (c>=32 && c<=126) ? HELV[c-32] : (c===0x96 ? 556 : c===0x97 ? 1000 : 556); } return t * size / 1000 * (bold ? 1.06 : 1); }
+function fitText(s, maxW, size, bold){ s = String(s ?? ''); if (textW(s,size,bold) <= maxW) return s; while (s.length > 1 && textW(s+'...',size,bold) > maxW) s = s.slice(0,-1); return s.trimEnd() + '...'; }
+function wrapText(s, maxW, size, bold){ const words = String(s ?? '').split(/\s+/).filter(Boolean); const lines = []; let line = ''; for (const wd of words){ const t = line ? line+' '+wd : wd; if (textW(t,size,bold) <= maxW) line = t; else { if (line) lines.push(line); line = textW(wd,size,bold) > maxW ? fitText(wd,maxW,size,bold) : wd; } } if (line) lines.push(line); return lines; }
+function latin1(s){ const b = new Uint8Array(s.length); for (let i=0;i<s.length;i++) b[i] = s.charCodeAt(i) & 255; return b; }
+const PW = 595.28, PH = 841.89, PM = 40;
+const fmt = n => String(Math.round(n*100)/100);
+const rgb = c => c.map(x=>fmt(x)).join(' ');
+class PdfDoc {
+  constructor(){ this.objs = new Map(); this.next = 5; this.pages = [];
+    this.objs.set(3, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+    this.objs.set(4, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'); }
+  alloc(){ return this.next++; }
+  addImage(img){ const id = this.alloc(); this.objs.set(id, [`<< /Type /XObject /Subtype /Image /Width ${img.w} /Height ${img.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.bytes.length} >>\nstream\n`, img.bytes, '\nendstream']); return id; }
+  page(){ const ops = [], images = {}; this.pages.push({ops, images});
+    return {
+      text(s, x, y, size=10, bold=false, color=[0.09,0.13,0.15]){ ops.push(`BT ${rgb(color)} rg /${bold?'F2':'F1'} ${fmt(size)} Tf ${fmt(x)} ${fmt(PH-y)} Td (${pdfEsc(toWin(s))}) Tj ET`); },
+      textR(s, xr, y, size=10, bold=false, color){ this.text(s, xr - textW(s,size,bold), y, size, bold, color); },
+      rect(x, y, w, hgt, fill, stroke, lw=0.75){ if (fill) ops.push(`${rgb(fill)} rg ${fmt(x)} ${fmt(PH-y-hgt)} ${fmt(w)} ${fmt(hgt)} re f`); if (stroke) ops.push(`${rgb(stroke)} RG ${fmt(lw)} w ${fmt(x)} ${fmt(PH-y-hgt)} ${fmt(w)} ${fmt(hgt)} re S`); },
+      line(x1, y1, x2, y2, color, lw=0.75){ ops.push(`${rgb(color)} RG ${fmt(lw)} w ${fmt(x1)} ${fmt(PH-y1)} m ${fmt(x2)} ${fmt(PH-y2)} l S`); },
+      image(id, x, y, w, hgt){ const name = 'Im' + id; images[name] = id; ops.push(`q ${fmt(w)} 0 0 ${fmt(hgt)} ${fmt(x)} ${fmt(PH-y-hgt)} cm /${name} Do Q`); }
+    }; }
+  finish(title){
+    const pageIds = [];
+    for (const p of this.pages){
+      const content = latin1(p.ops.join('\n'));
+      const cid = this.alloc(); this.objs.set(cid, [`<< /Length ${content.length} >>\nstream\n`, content, '\nendstream']);
+      const pid = this.alloc(); const xo = Object.entries(p.images).map(([n,id])=>`/${n} ${id} 0 R`).join(' ');
+      this.objs.set(pid, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>${xo ? ` /XObject << ${xo} >>` : ''} >> /Contents ${cid} 0 R >>`);
+      pageIds.push(pid);
+    }
+    this.objs.set(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    this.objs.set(2, `<< /Type /Pages /Kids [${pageIds.map(i=>i+' 0 R').join(' ')}] /Count ${pageIds.length} >>`);
+    const d = new Date(); const infoId = this.alloc();
+    this.objs.set(infoId, `<< /Title (${pdfEsc(toWin(title))}) /Producer (MineReady ${APP_VERSION}) /CreationDate (D:${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}${pad2(d.getHours())}${pad2(d.getMinutes())}${pad2(d.getSeconds())}) >>`);
+    const chunks = []; let pos = 0; const offsets = [];
+    const push = c => { const b = typeof c === 'string' ? latin1(c) : c; chunks.push(b); pos += b.length; };
+    push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+    const max = this.next - 1;
+    for (let id=1; id<=max; id++){ const o = this.objs.get(id); if (o == null) continue; offsets[id] = pos; push(`${id} 0 obj\n`); (Array.isArray(o) ? o : [o]).forEach(push); push('\nendobj\n'); }
+    const xref = pos;
+    let x = `xref\n0 ${max+1}\n0000000000 65535 f \n`;
+    for (let id=1; id<=max; id++) x += offsets[id] != null ? String(offsets[id]).padStart(10,'0') + ' 00000 n \n' : '0000000000 65535 f \n';
+    push(x); push(`trailer\n<< /Size ${max+1} /Root 1 0 R /Info ${infoId} 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+    return new Blob(chunks, {type:'application/pdf'});
+  }
+}
+const PC = {ink:[0.09,0.13,0.15], muted:[0.28,0.33,0.35], light:[0.42,0.47,0.49], head:[0.082,0.137,0.165], white:[1,1,1], line:[0.86,0.88,0.86], shade:[0.957,0.961,0.949],
+  valid:[0.114,0.384,0.212], soon:[0.478,0.29,0], expired:[0.62,0.122,0.09], missing:[0.27,0.30,0.33], accent:[0.059,0.373,0.455], amber:[0.91,0.64,0.24],
+  validBg:[0.89,0.95,0.906], incomplete:[0.54,0.23,0.02], incBg:[0.988,0.906,0.839], soonBg:[1,0.945,0.82], badBg:[0.984,0.894,0.886]};
+function pdfStatus(st, rec){
+  if (st==='missing' || !rec) return 'Missing';
+  if (st==='expired') return 'Expired';
+  if (st==='incomplete') return 'Incomplete';
+  if (rec.noExpiry) return 'Valid';
+  if (st==='soon'){ const n = daysUntil(rec.expires); return n===0 ? 'Expires today' : `${n} days left`; }
+  return 'Valid';
+}
+function buildPdf(plan){
+  const doc = new PdfDoc();
+  const co = plan.profile.name || 'Company', mineName = plan.mine.name, today = fmtDate(ymd(today0()));
+  // index rows and pagination
+  const rows = []; let last = null;
+  for (const e of plan.entries){ const key = e.section==='company' ? 'Company documents' : e.holder + (e.sub ? ', ' + e.sub : ''); if (key !== last){ rows.push({kind:'sec', text:key}); last = key; } rows.push({kind:'row', e}); }
+  const RH = 18, SH = 24, BOTTOM = 790, FIRST_TOP = 132, TOP = 78;
+  const placed = []; let pg = 0, y = FIRST_TOP;
+  for (const r of rows){ const hh = r.kind==='sec' ? SH : RH; if (y + hh > BOTTOM){ pg++; y = TOP; } placed.push({r, pg, y}); y += hh; }
+  const idxPages = rows.length ? pg + 1 : 1;
+  let count = 1 + idxPages;
+  for (const e of plan.entries) if (e.img){ count++; e.page = count; }
+  const total = count;
+  const footer = (p, n) => { p.line(PM, 806, PW-PM, 806, PC.line, 0.5); p.text(fitText(`${plan.sample ? 'SAMPLE DATA · ' : ''}MineReady · Contractor file · ${co} · ${mineName}`, 400, 7.5), PM, 820, 7.5, plan.sample, plan.sample ? PC.expired : PC.light); p.textR(`Page ${n} of ${total}`, PW-PM, 820, 7.5, false, PC.light); };
+
+  // cover
+  const c = doc.page();
+  c.rect(0, 0, PW, 168, PC.head);
+  c.rect(PM, 44, 30, 4, PC.amber);
+  c.text(plan.sample ? 'CONTRACTOR FILE  ·  SAMPLE DATA' : 'CONTRACTOR FILE', PM, 70, 10, true, plan.sample ? PC.amber : [0.72,0.77,0.79]);
+  c.text(fitText(co, PW-2*PM, 24, true), PM, 104, 24, true, PC.white);
+  c.text(fitText('For ' + mineName, PW-2*PM, 14), PM, 134, 14, false, [0.86,0.9,0.91]);
+  let cy = 206;
+  if (plan.sample){
+    c.rect(PM, 178, PW-2*PM, 40, PC.badBg, PC.expired, 1);
+    c.text('SAMPLE DATA – FOR DEMONSTRATION ONLY', PM+12, 195, 11, true, PC.expired);
+    c.text(fitText('All company and worker records in this file are fictional. It is not a real submission.', PW-2*PM-24, 9), PM+12, 210, 9, false, PC.ink);
+    cy = 246;
+  }
+  c.text('Company details', PM, cy, 12, true); cy += 20;
+  const det = [['PACRA reg. no.', plan.profile.pacra], ['TPIN', plan.profile.tpin], ['Contact person', plan.profile.contact], ['Phone', plan.profile.phone], ['Email', plan.profile.email], ['Address', plan.profile.address]].filter(x=>x[1]);
+  if (!det.length) { c.text('No company details entered.', PM, cy, 10, false, PC.muted); cy += 16; }
+  for (const [k,v] of det){ c.text(k, PM, cy, 9.5, false, PC.muted); c.text(fitText(v, PW-2*PM-130, 10), PM+130, cy, 10); cy += 17; }
+  cy += 14;
+  const companyEntries = plan.entries.filter(e=>e.section==='company');
+  const validCo = companyEntries.filter(e=>e.status==='valid' || e.status==='soon').length;
+  const workerDocs = plan.entries.filter(e=>e.section==='worker').length;
+  const boxTop = cy; const boxH = 104;
+  c.rect(PM, boxTop, PW-2*PM, boxH, PC.shade, PC.line);
+  const stat = (label, value, x) => { c.text(value, x, boxTop+44, 22, true, PC.ink); c.text(label, x, boxTop+64, 9, false, PC.muted); };
+  const colW = (PW-2*PM-32)/3;
+  stat('company documents valid', `${validCo} of ${companyEntries.length}`, PM+16);
+  stat('workers included', String(plan.workerCount), PM+16+colW);
+  stat('documents in this file', String(plan.entries.length), PM+16+2*colW);
+  c.text(fitText(`Workers cleared for ${mineName}: ${plan.clearedCount} of ${plan.totalWorkers} (${plan.pct}% ready). Checked ${today}.`, PW-2*PM-32, 9), PM+16, boxTop+88, 9, false, PC.muted);
+  cy = boxTop + boxH + 28;
+  if (plan.notCleared.length){
+    const show = plan.notCleared.slice(0,5);
+    c.text(`Workers not cleared, not included in this file (${plan.notCleared.length})`, PM, cy, 10.5, true, PC.ink); cy += 17;
+    for (const n of show){ c.text(fitText(`${n.name}: ${n.why}`, PW-2*PM, 9.5), PM, cy, 9.5, false, PC.muted); cy += 15; }
+    if (plan.notCleared.length > show.length){ c.text(`+${plan.notCleared.length-show.length} more`, PM, cy, 9.5, false, PC.muted); cy += 15; }
+    cy += 16;
+  }
+  const soonList = plan.entries.filter(e=>e.status==='soon');
+  const badList = plan.entries.filter(e=>BLOCKING.has(e.status));
+  if (badList.length){
+    c.rect(PM, cy-14, PW-2*PM, 22 + Math.min(badList.length,8)*15, PC.badBg);
+    c.text('Needs attention before submitting', PM+12, cy+2, 10.5, true, PC.expired); cy += 19;
+    for (const e of badList.slice(0,8)){ c.text(fitText(`${e.title} (${e.holder}): ${e.status==='expired' ? 'expired ' + fmtDate(e.rec.expires) : statusWord(e.status)}`, PW-2*PM-24, 9.5), PM+12, cy, 9.5, false, PC.ink); cy += 15; }
+    cy += 18;
+  }
+  if (soonList.length && cy < 700){
+    c.text(`Expiring within ${plan.warnDays} days`, PM, cy, 10.5, true, PC.soon); cy += 17;
+    for (const e of soonList.slice(0, Math.max(1, Math.floor((760-cy)/15)))){ c.text(fitText(`${e.title} (${e.holder}): expires ${fmtDate(e.rec.expires)}`, PW-2*PM, 9.5), PM, cy, 9.5, false, PC.ink); cy += 15; }
+  }
+  c.text(fitText(`Prepared with MineReady on ${today}. The index on the next page lists every document; copies follow it.`, PW-2*PM, 8.5), PM, 788, 8.5, false, PC.muted);
+  footer(c, 1);
+
+  // index
+  const cols = [['#',22],['Document',170],['Ref no.',85],['Issued',62],['Expires',62],['Status',64],['Copy',50]];
+  const pagesIdx = [];
+  for (let i=0;i<idxPages;i++){ const p = doc.page(); pagesIdx.push(p);
+    const top = i===0 ? FIRST_TOP : TOP;
+    if (i===0){ p.text('Index of documents', PM, 64, 18, true); p.text(fitText(`${co} · ${mineName} · ${today}`, PW-2*PM, 10), PM, 84, 10, false, PC.muted); }
+    p.rect(PM, top-RH-6, PW-2*PM, RH, PC.shade);
+    let x = PM; for (const [t,wd] of cols){ p.text(t, x+4, top-11, 8, true, PC.muted); x += wd; }
+    footer(p, 2+i);
+  }
+  for (const {r, pg: pi, y: yy} of placed){
+    const p = pagesIdx[pi];
+    if (r.kind==='sec'){ p.text(fitText(r.text, PW-2*PM-8, 10, true), PM+4, yy+16, 10, true, PC.accent); p.line(PM, yy+21, PW-PM, yy+21, PC.line, 0.5); continue; }
+    const e = r.e; const st = e.status; const by = yy + 12.5;
+    const vals = [String(e.n), e.title, e.rec && e.rec.ref || '–', e.rec && e.rec.issued ? fmtDate(e.rec.issued) : '–',
+      e.rec ? (e.rec.noExpiry ? 'No expiry' : fmtDate(e.rec.expires)) : '–', pdfStatus(st, e.rec),
+      e.img ? `page ${e.page}` : e.attach ? 'PDF file' : (e.rec ? 'not attached' : '–')];
+    let x = PM;
+    vals.forEach((v, i) => { const wd = cols[i][1]; const color = i===5 ? PC[st] : (i===6 && !e.img && !e.attach ? PC.light : PC.ink); p.text(fitText(v, wd-8, 8.5, i===5), x+4, by, 8.5, i===5, color); x += wd; });
+    p.line(PM, yy+RH-1, PW-PM, yy+RH-1, [0.93,0.94,0.93], 0.4);
+  }
+  if (plan.attachments.length){ const p = pagesIdx[pagesIdx.length-1]; p.text(fitText('Documents marked "PDF file" are included as separate PDF files in the ZIP pack.', PW-2*PM, 8.5), PM, 798, 8.5, false, PC.muted); }
+
+  // one page per document copy
+  for (const e of plan.entries){
+    if (!e.img) continue;
+    const p = doc.page();
+    p.text(fitText(`${co} · Contractor file for ${mineName}`, PW-2*PM-60, 8), PM, 40, 8, false, PC.light);
+    p.textR(`#${e.n}`, PW-PM, 40, 8, true, PC.light);
+    p.text(fitText(e.title, PW-2*PM-110, 16, true), PM, 68, 16, true);
+    const stt = pdfStatus(e.status, e.rec); const sw = textW(stt, 9, true) + 16;
+    p.rect(PW-PM-sw, 55, sw, 18, e.status==='valid' ? PC.validBg : e.status==='soon' ? PC.soonBg : e.status==='incomplete' ? PC.incBg : PC.badBg);
+    p.text(stt, PW-PM-sw+8, 68, 9, true, PC[e.status]);
+    p.text(fitText(e.holder + (e.sub ? ', ' + e.sub : ''), PW-2*PM, 11), PM, 88, 11, false, PC.muted);
+    const det2 = [e.rec.ref ? 'Ref no. ' + e.rec.ref : '', e.rec.issued ? 'Issued ' + fmtDate(e.rec.issued) : '', e.rec.noExpiry ? 'No expiry' : 'Expires ' + fmtDate(e.rec.expires)].filter(Boolean).join('     ');
+    p.text(fitText(det2, PW-2*PM, 9.5), PM, 106, 9.5);
+    const id = doc.addImage(e.img);
+    const areaY = 122, areaH = 790 - areaY, areaW = PW - 2*PM;
+    const s = Math.min(areaW / e.img.w, areaH / e.img.h);
+    const iw = e.img.w * s, ih = e.img.h * s;
+    const ix = PM + (areaW - iw)/2;
+    p.image(id, ix, areaY, iw, ih);
+    p.rect(ix, areaY, iw, ih, null, PC.line, 0.6);
+    footer(p, e.page);
+  }
+  return doc.finish(`Contractor file - ${co} - ${mineName}`);
+}
+
+const CRC_TABLE = (()=>{ const t = new Uint32Array(256); for (let n=0;n<256;n++){ let c = n; for (let k=0;k<8;k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(b){ let c = 0xFFFFFFFF; for (let i=0;i<b.length;i++) c = CRC_TABLE[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files){
+  const enc = new TextEncoder(); const parts = [], central = []; let offset = 0;
+  const d = new Date(); const time = (d.getHours()<<11) | (d.getMinutes()<<5) | Math.floor(d.getSeconds()/2); const date = ((d.getFullYear()-1980)<<9) | ((d.getMonth()+1)<<5) | d.getDate();
+  for (const f of files){
+    const name = enc.encode(f.name), data = f.data, crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true); lh.setUint16(4,20,true); lh.setUint16(6,0x0800,true); lh.setUint16(8,0,true); lh.setUint16(10,time,true); lh.setUint16(12,date,true);
+    lh.setUint32(14,crc,true); lh.setUint32(18,data.length,true); lh.setUint32(22,data.length,true); lh.setUint16(26,name.length,true); lh.setUint16(28,0,true);
+    parts.push(new Uint8Array(lh.buffer), name, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,20,true); ch.setUint16(8,0x0800,true); ch.setUint16(10,0,true); ch.setUint16(12,time,true); ch.setUint16(14,date,true);
+    ch.setUint32(16,crc,true); ch.setUint32(20,data.length,true); ch.setUint32(24,data.length,true); ch.setUint16(28,name.length,true); ch.setUint16(30,0,true); ch.setUint16(32,0,true);
+    ch.setUint16(34,0,true); ch.setUint16(36,0,true); ch.setUint32(38,0,true); ch.setUint32(42,offset,true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + data.length;
+  }
+  const cdSize = central.reduce((s,b)=>s+b.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true); end.setUint16(4,0,true); end.setUint16(6,0,true); end.setUint16(8,files.length,true); end.setUint16(10,files.length,true);
+  end.setUint32(12,cdSize,true); end.setUint32(16,offset,true); end.setUint16(20,0,true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], {type:'application/zip'});
+}
+
+/* =========================================================================
+   Boot
+   ========================================================================= */
+function ingest(docs){
+  let profile = null, settings = null; const cds = [], ws = [];
+  for (const {id, data} of docs){
+    if (!data || typeof data !== 'object') continue;
+    if (id === 'profile') profile = sanitizeProfile(data);
+    else if (id === 'settings') settings = data;
+    else if (id.startsWith('cd_')){ const d = sanitizeRec(data, id.slice(3)); if (d) cds.push(d); }
+    else if (id.startsWith('w_')){ const w = sanitizeWorker(data, id.slice(2)); if (w) ws.push(w); }
+  }
+  S.profile = profile;
+  if (settings){ S.settings = sanitizeSettings(settings); S.settingsSaved = true; }
+  S.companyDocs = cds.sort((a,b)=>a.type.localeCompare(b.type));
+  S.workers = ws.sort((a,b)=>a.name.localeCompare(b.name));
+  S.loaded = true;
+}
+async function boot(){
+  renderChrome();
+  let db = null, user = null, assets = null, downloads = null;
+  try{
+    if (typeof claude !== 'undefined' && claude && typeof claude.use === 'function'){
+      [db, user, assets, downloads] = await Promise.all(['db','user','assets','downloads'].map(n=>Promise.resolve(claude.use(n)).catch(()=>null)));
+    }
+  }catch{}
+  let uid = null;
+  if (db && user){ try{ uid = await user.id(); }catch{} }
+  S.downloads = downloads || (ANDROID ? makeAndroidDownloads() : makeWebDownloads());
+  if (db && uid){ S.store = makeCloudStore(db, uid, assets); S.sync = 'connecting'; }
+  else if (!db){
+    try{ S.store = await makeDeviceStore(); S.sync = 'device'; S.syncNote = 'Saved in this browser on this device'; }
+    catch{ S.store = makeMemoryStore(); S.sync = 'local'; S.syncNote = 'Demo mode: not connected to storage'; }
+  }
+  else { S.store = makeMemoryStore(); S.sync = 'local'; S.syncNote = 'Demo mode: not connected to storage'; }
+  S.ready = true;
+  route();
+  let first = false;
+  const timer = setTimeout(()=>{ if (!first && S.store.kind==='cloud'){ S.sync = 'stale'; S.syncNote = "Can't reach your saved records yet. Check your connection."; softRender(); } }, 10000);
+  S.store.subscribe((docs, meta)=>{
+    ingest(docs);
+    if (!first && !(meta && meta.fromCache)){ first = true; clearTimeout(timer); }
+    if (S.store.kind==='cloud' && !(meta && meta.fromCache)){ S.sync = 'live'; S.syncNote = 'Saved to your account'; }
+    softRender();
+  }, e=>{
+    clearTimeout(timer);
+    S.sync = 'off'; S.syncNote = e && e.code==='revoked' ? 'Your access changed. Reload the page.' : 'Lost connection. Reload the page to reconnect.';
+    S.loaded = true; softRender();
+  });
+}
+boot();
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+</script>
+</body>
+</html>
