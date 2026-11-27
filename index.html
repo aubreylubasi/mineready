@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#15232A">
-<meta name="description" content="Keep mine contractors' company and worker documents ready for site access.">
+<meta name="description" content="MineReady keeps mine contractors' company and worker documents ready for site access. Built by Aubrey Lubasi in Ndola, Zambia.">
+<meta name="author" content="Aubrey Lubasi">
+<link rel="canonical" href="https://mineready.aubreylubasi.dev/">
+<meta property="og:title" content="MineReady - Contractor Documents">
+<meta property="og:description" content="Keep mine contractors' company and worker documents ready for site access. Built by Aubrey Lubasi in Ndola, Zambia.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mineready.aubreylubasi.dev/">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="MineReady">
@@ -1157,7 +1163,7 @@ function viewMore(){
       h('li',null, h('b',null,'Safe display and exports. '), 'Text is always shown as plain text, inputs are checked, and the CSV export blocks spreadsheet formula tricks.'),
       h('li',null, h('b',null,'No trackers. '), 'MineReady loads no analytics or advertising scripts.')),
     h('p',{class:'hint',style:'margin-top:8px'}, 'For production: company accounts with several users, mine-side access to submitted files, SMS and email reminders, and compliance with the Data Protection Act No. 3 of 2021.'), h('p',{class:'hint',style:'margin-top:8px'}, h('a',{href:'privacy.html',target:'_blank',rel:'noopener'},'Privacy policy'), ' · ', h('a',{href:'terms.html',target:'_blank',rel:'noopener'},'Terms of use'))));
-  root.append(h('p',{class:'xs muted',style:'text-align:center'}, `MineReady v${APP_VERSION} · ${S.store.kind==='cloud' ? 'saved to your account' : S.store.kind==='device' ? 'saved on this device' : 'demo mode, not saved'}`));
+  root.append(h('p',{class:'xs muted',style:'text-align:center'}, `MineReady v${APP_VERSION} · ${S.store.kind==='cloud' ? 'saved to your account' : S.store.kind==='device' ? 'saved on this device' : 'demo mode, not saved'}`), h('p',{class:'xs muted',style:'text-align:center;margin-top:4px'}, 'Built by ', h('a',{href:'https://aubreylubasi.dev',target:'_blank',rel:'noopener'},'Aubrey Lubasi'), ' · Ndola, Zambia'));
   return root;
 }
 
